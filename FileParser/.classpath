@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/antlr-2.7.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/hibernate-commons-annotations-4.0.1.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/hibernate-core-4.1.9.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/javassist-3.17.1-GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/jboss-logging-3.1.0.GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/hibernate/jboss-transaction-api_1.1_spec-1.0.0.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/jdbc/mysql/mysql-connector-java-3.0.17-ga-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/Base64Utilis.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/bcmail-jdk15.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/bouncycastle.jar"/>
+	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/SignData.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
