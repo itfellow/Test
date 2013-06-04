@@ -8,7 +8,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import com.omni.component.hibernate.DataBaseUtility;
 import com.omni.component.hibernate.HibernateUtil;
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserPatterns;
+import com.omni.oesb.constants.ParserConstants;
 
 public final class FileParserDao extends DataBaseUtility {
 	
@@ -16,9 +16,10 @@ public final class FileParserDao extends DataBaseUtility {
 	/**
 	 * check whether msg is outgoing,incoming or ack typ<br>
 	 * example pass N06 string it will return Out<br>
-	 * (Possible return values check DB table Message_type_mst table)
+	 * (Possible return values check DB table Message_type_mst table)<br>
+	 * 
 	 * @param msgSubTyp
-	 * @return {@link String}
+	 * @return {@link String} 
 	 */
 	
 	public String checkMsgTyp(String msgSubTyp,String IO_identifier){
@@ -37,9 +38,14 @@ public final class FileParserDao extends DataBaseUtility {
 		return msgTyp;
 	}
 	
+	/**
+	 * Perform Batch Insert Opertion and return parser status after the operation
+	 * @param tablepojo
+	 * @return {@link String}
+	 */
 	public String insertOesbTransactions(final Object[] tablepojo) {
 		
-		String parserStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parserStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		Session sessionForInsertPojo = null;
 		Transaction trForInsertPojo = null;
@@ -54,11 +60,11 @@ public final class FileParserDao extends DataBaseUtility {
 			}
 			
 			trForInsertPojo.commit();
-			parserStatus = ParserPatterns.MSG_PARSE_SUCCESS;
+			parserStatus = ParserConstants.MSG_PARSE_SUCCESS;
 			fileLogger.writeLog("info", "Batch Insert Completed Successfully");
 			
 		}catch(ConstraintViolationException e){
-			parserStatus = ParserPatterns.MSG_PARSE_ERROR;
+			parserStatus = ParserConstants.MSG_PARSE_ERROR;
 			e.printStackTrace();
 			if(trForInsertPojo!=null){
 				trForInsertPojo.rollback();
@@ -68,7 +74,7 @@ public final class FileParserDao extends DataBaseUtility {
 			fileLogger.writeLog("info", "Duplicate Message Detected, Batch Insert Cannot be performed");
 		}
 		catch (HibernateException e) {
-			parserStatus = ParserPatterns.MSG_PARSE_ERROR;
+			parserStatus = ParserConstants.MSG_PARSE_ERROR;
 			e.printStackTrace();
 			if(trForInsertPojo!=null){
 				trForInsertPojo.rollback();
@@ -89,10 +95,14 @@ public final class FileParserDao extends DataBaseUtility {
 		return parserStatus;
 	}
 	
-	
+	/**
+	 * Perform Batch Update Operation and return parserStatus
+	 * @param tablepojo
+	 * @return {@link String}
+	 */
 	public String updateOesbRecord(final Object[] tablepojo) {
 		
-		String parserStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parserStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		Session sessionForUpdatePojo = null;
 		Transaction trForUpdatePojo = null;
@@ -108,10 +118,10 @@ public final class FileParserDao extends DataBaseUtility {
 			}
 			
 			trForUpdatePojo.commit();
-			parserStatus = ParserPatterns.MSG_PARSE_SUCCESS;
+			parserStatus = ParserConstants.MSG_PARSE_SUCCESS;
 			fileLogger.writeLog("info", "Batch Update Completed Successfully");
 		} catch (HibernateException e) {
-			parserStatus = ParserPatterns.MSG_PARSE_ERROR;
+			parserStatus = ParserConstants.MSG_PARSE_ERROR;
 			e.printStackTrace();
 			
 			if (trForUpdatePojo != null){

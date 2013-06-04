@@ -15,5 +15,8 @@
 	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/bcmail-jdk15.jar"/>
 	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/bouncycastle.jar"/>
 	<classpathentry exported="true" kind="lib" path="depend/Digital_Signature/SignData.jar"/>
+	<classpathentry kind="lib" path="depend/ehcache/ehcache-2.7.0.jar"/>
+	<classpathentry kind="lib" path="depend/ehcache/slf4j-api-1.6.6.jar"/>
+	<classpathentry kind="lib" path="depend/ehcache/slf4j-jdk14-1.6.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

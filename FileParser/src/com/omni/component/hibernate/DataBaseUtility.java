@@ -18,21 +18,31 @@ public class DataBaseUtility {
 	}
 	
 	public boolean checkId(final Class<?> classToGet, String key){
+		
 		boolean isFound = false;
+		
 		Object tablePojo = getObject(classToGet,key);
+		
 		if(tablePojo!=null){
+			
 			isFound = true;
+			
 		}
+		
 		return isFound;
+	
 	}
 	
 	public Object getObject(final Class<?> classToGet, final Object key) {
 		
 		Object tablePojo = null;
+		
 		Session sessionForObjectToUpdate = null;
+		
 		Transaction trForObjectToUpdate = null;
 		
 		try{
+			
 			sessionForObjectToUpdate = getSession();
 			
 			trForObjectToUpdate = sessionForObjectToUpdate.beginTransaction();
@@ -56,7 +66,9 @@ public class DataBaseUtility {
 		return tablePojo;
 	}
 	
-	
+	/**
+	 * Simple update of pojoTable
+	 */
 	public void updateWithTransaction(final Object tablepojo) {
 		
 		Session sessionForUpdate = null;
@@ -83,7 +95,11 @@ public class DataBaseUtility {
 	}
 	
 
-	
+	/**
+	 * simple insert of pojoTable
+	 * 
+	 * @param tablePojo
+	 */
 	public void insertRecord(final Object tablePojo){
 		
 		Session sessionForSavePojo = null;
@@ -114,7 +130,10 @@ public class DataBaseUtility {
 	}
 
 	
-	
+	/**
+	 * Performs batch Insert of multiple pojoTables
+	 * @param tablepojo
+	 */
 	public void insertRecord(final Object[] tablepojo) {
 		
 		Session sessionForInsertPojo = null;
@@ -148,6 +167,10 @@ public class DataBaseUtility {
 		}
 	}
 	
+	/**
+	 * Optimized batch insert for insert more than 10 Tables at time
+	 * @param tablePojo
+	 */
 	@SuppressWarnings("unchecked")
 	public void batchInsert(final Object[] tablePojo) {
 		
@@ -194,38 +217,7 @@ public class DataBaseUtility {
 
 	}
 	
-	public void executeSQLQuery(final String SQL_QUERY) {
-		Session sessionForInsertSQL = null;
-		Transaction trForInsertSQL = null;
 
-		try {
-			
-			sessionForInsertSQL = getSession();
-			trForInsertSQL = sessionForInsertSQL.beginTransaction();
-			
-			Query query = sessionForInsertSQL.createSQLQuery(SQL_QUERY);
-			
-			int result = query.executeUpdate();
-			
-			System.out.println("Rows affected: " + result);
-			
-			trForInsertSQL.commit();
-			
-		} catch(HibernateException e) {
-			e.printStackTrace();
-			
-			if(trForInsertSQL!=null){
-				trForInsertSQL.rollback();
-			}
-		}
-		finally {
-			if(sessionForInsertSQL!=null && sessionForInsertSQL.isOpen()) {
-				sessionForInsertSQL.close();
-			}
-		}
-	
-		
-	}
 
 	
 	/**
@@ -381,48 +373,7 @@ public class DataBaseUtility {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void batchUpdate(final Object[] tablePojo, final String tableName) {
-		Session sessionForBatchUpdate = null;
-		Transaction trForBatchUpdate = null;
 
-		try {
-			sessionForBatchUpdate = getSession();
-			trForBatchUpdate = sessionForBatchUpdate.beginTransaction();
-			
-			sessionForBatchUpdate.setCacheMode(CacheMode.IGNORE);
-			
-			for (int i = 0; i < tablePojo.length; i++) {
-				ArrayList<Object> list1 = (ArrayList<Object>) tablePojo[i];
-				int count = 0;
-				for (Object object : list1) {
-					sessionForBatchUpdate.update(object);
-					System.out.println("updated objects = " + ++count);
-					count++;
-					if (count % 50 == 0) {
-						sessionForBatchUpdate.flush();
-						sessionForBatchUpdate.clear();
-					}
-				}
-
-			}
-			trForBatchUpdate.commit();
-			System.out.println("-------Objects updated successfully------");
-		} catch (HibernateException e) {
-			
-			e.printStackTrace();
-			
-			if (trForBatchUpdate != null){
-				trForBatchUpdate.rollback();
-			}
-	
-		} finally {
-			if (sessionForBatchUpdate!=null && sessionForBatchUpdate.isOpen()) {
-				sessionForBatchUpdate.close();
-			}
-		}
-		
-	}
 	
 	/**
 	 * This method saves if the record is not present in table else it update the record
@@ -491,49 +442,8 @@ public class DataBaseUtility {
 		
 	}
 	
-	public void updateOrDeleteRecord(final String HQL_QUERY, final boolean isSQL){
-		
-		Session sessionForUpdateOrDel = null;
-		Transaction trForUpdateOrDel = null;
-		
-		try{
-			
-			sessionForUpdateOrDel = getSession();
-			
-			trForUpdateOrDel = sessionForUpdateOrDel.beginTransaction();
-			Query query = null;
-			if(isSQL != true){
-				
-				 query = sessionForUpdateOrDel.createQuery(HQL_QUERY);
-			
-			}
-			else{
-				
-				 query = sessionForUpdateOrDel.createSQLQuery(HQL_QUERY);
-				
-			}
-			int result = query.executeUpdate();
-			System.out.println("Rows affected: " + result);
-			
-			trForUpdateOrDel.commit();
-			
-		}catch(HibernateException e){
-			e.printStackTrace();
-			
-			if(trForUpdateOrDel!=null){
-				trForUpdateOrDel.rollback();
-			}
-		}
-		finally{
-			if(sessionForUpdateOrDel!=null && sessionForUpdateOrDel.isOpen()){
-				sessionForUpdateOrDel.close();
-			}
-		}
-		
-	}
 	
 
-	/////////////////////// utility methods /////////////////////////////////////////
 	public Long getCount(final String HQL_QUERY){
 
 		Long count= 0L;
@@ -553,8 +463,6 @@ public class DataBaseUtility {
 				count=(Long)query.list().get(0);
 			}
 			
-			/*System.out.println("\n Count returned: "+count+"\n");
-			System.out.println("For Query: "+HQL_QUERY);*/
 			trForGetCount.commit();
 		}   
 		catch(HibernateException  e){
@@ -573,27 +481,7 @@ public class DataBaseUtility {
 	}
 	
 	
-/*	public Long getTotalCount(String HQL_QUERY){
 
-		Long count= 0L;
-		try {
-			Query query = createQuery(HQL_QUERY);
-			if(query.list() == null || query.list().get(0)==null || (Long)query.list().get(0)<1L){
-				count=0L;
-			}else{
-				count=(Long)query.list().get(0);
-			
-			}
-		}   
-		catch(HibernateException  e){
-			System.out.println(e.getMessage());
-		}
-		finally{
-			if(session.isOpen())
-				session.close();
-		}
-		return count;
-	}*/
 	
 	
 	public void executeProcWithNoParam(final String procCall){
@@ -627,7 +515,8 @@ public class DataBaseUtility {
 	}
 	
 	/**
-	 * Generte new Primary key
+	 * Set them table name and name of the PrimaryKey column return new primary key Id for that
+	 * table as long
 	 * @param tableName
 	 * @param idPKColumnName
 	 * @return

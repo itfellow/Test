@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserPatterns;
+import com.omni.oesb.constants.ParserConstants;
 import com.omni.oesb.notification.TableInsert.vo.CommonAckStatusVo;
 import com.omni.oesb.notification.TableInsert.vo.CommonTransactionDtlsVo;
 import com.omni.oesb.omh.notification.data.N06Data;
@@ -28,7 +28,7 @@ public class TableDataInsert extends TableData {
 	 */
 	public  String insertcsvdata(ArrayList<String> CSV_Data[] ){
 
-		String parseStatus=ParserPatterns.MSG_PARSE_ERROR;
+		String parseStatus=ParserConstants.MSG_PARSE_ERROR;
 		
 		try{
 			
@@ -48,7 +48,7 @@ public class TableDataInsert extends TableData {
 					tablePojo[0] = n10;
 					parseStatus = nfDao.insertOesbTransactions(tablePojo);
 					
-					if(parseStatus.equals(ParserPatterns.MSG_PARSE_SUCCESS)){
+					if(parseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)){
 						TransactionDtls transDtls = (TransactionDtls) nfDao.getObject(TransactionDtls.class,transId);
 						transDtls.setTransaction_status("2");
 						transDtls.setTransCompleteDate(new CurrentDate());
@@ -104,7 +104,7 @@ public class TableDataInsert extends TableData {
 		
 		fileLogger.writeLog("info", "Insert Operation For "+msgSubTyp+" Started");
 		
-		String parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		try{
 			if(headerMap != null && !headerMap.isEmpty() && msgBodyMap != null && !msgBodyMap.isEmpty()){
@@ -125,7 +125,7 @@ public class TableDataInsert extends TableData {
 						}
 					}
 					else if(msgTyp.equalsIgnoreCase("In")){
-						parseStatus = ParserPatterns.MSG_PARSE_IGNORED;
+						parseStatus = ParserConstants.MSG_PARSE_IGNORED;
 						
 						System.out.println("System has Detected Incoming Message, Cannot Insert to DB");
 						System.out.println("Moving file to ignore...");
@@ -163,7 +163,7 @@ public class TableDataInsert extends TableData {
 	
 	
 	private String insertNeftAckTypMsg(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
-		String parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		Object[]tablePojo = null;
 		String transId = null;
@@ -293,7 +293,7 @@ public class TableDataInsert extends TableData {
 	
 	private String insertRtgsAckTypMsg(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 		
-		String parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		Object[]tablePojo = new Object[2];				// array r09 and common data table
 		String UTR = null;
@@ -397,7 +397,7 @@ public class TableDataInsert extends TableData {
 	
 	private String insertForOutGoingMsg(String msgTyp,HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 		
-		String parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		if(headerMap != null && !headerMap.isEmpty() && msgBodyMap != null && !msgBodyMap.isEmpty()){
 			
