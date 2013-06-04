@@ -1,4 +1,4 @@
-package com.omni.oesb.notification.dao;
+package com.omni.oesb.fileparser.dao;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -10,7 +10,7 @@ import com.omni.component.hibernate.HibernateUtil;
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.constants.ParserPatterns;
 
-public final class NotificationDao extends DataBaseUtility {
+public final class FileParserDao extends DataBaseUtility {
 	
 	private final FileLogger fileLogger  = FileLogger.getFileLogger(this.getClass().getName());
 	/**

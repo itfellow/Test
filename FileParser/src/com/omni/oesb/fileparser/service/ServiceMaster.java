@@ -1,4 +1,4 @@
-package com.omni.oesb.notification.parser.service;
+package com.omni.oesb.fileparser.service;
 /**
  * ServiceMaster is the Interface of all the service class.
  * service classes controls the adapter.

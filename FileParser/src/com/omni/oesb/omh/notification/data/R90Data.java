@@ -1,4 +1,4 @@
-package com.omni.omh.notification.data;
+package com.omni.oesb.omh.notification.data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

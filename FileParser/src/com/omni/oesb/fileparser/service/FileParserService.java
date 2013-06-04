@@ -1,7 +1,7 @@
-package com.omni.oesb.notification.parser.service;
+package com.omni.oesb.fileparser.service;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.notification.parser.adapters.FileParserAdapter;
+import com.omni.oesb.fileparser.adapters.FileParserAdapter;
 
 
 

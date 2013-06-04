@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.DigitalSignature.SignData;
 import com.omni.oesb.constants.ParserPatterns;
-import com.omni.oesb.parser.MsgParser;
+import com.omni.oesb.fileparser.MsgParser;
 import com.omni.util.common.PropAccess;
 
 public class FileReaderUtil 

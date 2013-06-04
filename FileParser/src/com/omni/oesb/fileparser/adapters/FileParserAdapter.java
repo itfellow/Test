@@ -1,4 +1,4 @@
-package com.omni.oesb.notification.parser.adapters;
+package com.omni.oesb.fileparser.adapters;
 
 import java.io.File;
 import java.util.ResourceBundle;

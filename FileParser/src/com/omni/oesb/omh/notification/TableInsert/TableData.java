@@ -1,22 +1,22 @@
-package com.omni.oesb.notification.TableInsert;
+package com.omni.oesb.omh.notification.TableInsert;
 
 import java.util.Date;
 import java.util.HashMap;
 
+import com.omni.oesb.fileparser.dao.FileParserDao;
 import com.omni.oesb.notification.TableInsert.vo.CommonAckStatusVo;
 import com.omni.oesb.notification.TableInsert.vo.CommonTransactionDtlsVo;
 import com.omni.oesb.notification.Util.ParserUtil;
-import com.omni.oesb.notification.dao.NotificationDao;
-import com.omni.omh.notification.data.MessageHeader;
-import com.omni.omh.notification.data.MessageNotificationDtls;
-import com.omni.omh.notification.data.N06Data;
-import com.omni.omh.notification.data.N09Data;
-import com.omni.omh.notification.data.N10Data;
-import com.omni.omh.notification.data.R09Data;
-import com.omni.omh.notification.data.R41Data;
-import com.omni.omh.notification.data.R42Data;
-import com.omni.omh.notification.data.R90Data;
-import com.omni.omh.notification.data.TransactionDtls;
+import com.omni.oesb.omh.notification.data.MessageHeader;
+import com.omni.oesb.omh.notification.data.MessageNotificationDtls;
+import com.omni.oesb.omh.notification.data.N06Data;
+import com.omni.oesb.omh.notification.data.N09Data;
+import com.omni.oesb.omh.notification.data.N10Data;
+import com.omni.oesb.omh.notification.data.R09Data;
+import com.omni.oesb.omh.notification.data.R41Data;
+import com.omni.oesb.omh.notification.data.R42Data;
+import com.omni.oesb.omh.notification.data.R90Data;
+import com.omni.oesb.omh.notification.data.TransactionDtls;
 import com.omni.util.common.CommonClass;
 
 /**
@@ -28,7 +28,7 @@ import com.omni.util.common.CommonClass;
  */
 public class TableData {
 	
-	protected final NotificationDao nfDao = new NotificationDao();
+	protected final FileParserDao nfDao = new FileParserDao();
 	
 	protected ParserUtil parserUtil = new ParserUtil();
 	

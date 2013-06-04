@@ -1,12 +1,12 @@
-package com.omni.oesb.parser;
+package com.omni.oesb.fileparser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.constants.ParserPatterns;
-import com.omni.oesb.notification.TableInsert.TableDataInsert;
 import com.omni.oesb.notification.Util.ParserUtil;
+import com.omni.oesb.omh.notification.TableInsert.TableDataInsert;
 
 
 public class MsgParser{
