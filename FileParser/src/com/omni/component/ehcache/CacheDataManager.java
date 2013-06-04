@@ -10,7 +10,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import com.omni.util.PropAccess;
+
 
 /**
  * This class handles cache data management
