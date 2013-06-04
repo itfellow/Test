@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserPatterns;
+import com.omni.oesb.constants.ParserConstants;
 
 
 public class ParserUtil 
@@ -126,7 +126,7 @@ public class ParserUtil
 			 String value="";
 
 			// System.out.println("msgBody ------------> "+msgBody);
-			 Pattern p = Pattern.compile(ParserPatterns.MSG_BLOCK_DATA_PATTERN);
+			 Pattern p = Pattern.compile(ParserConstants.MSG_BLOCK_DATA_PATTERN);
 			 Matcher m = p.matcher(msgBody);
 			        
 			 Pattern p_tag = Pattern.compile(pattern_tag);
@@ -276,7 +276,7 @@ public class ParserUtil
 		
 		if(message != null && message.trim().length() > 0){
 			
-			Pattern msgBlockPattern = Pattern.compile(ParserPatterns.MSG_BLOCK_PATTERN);
+			Pattern msgBlockPattern = Pattern.compile(ParserConstants.MSG_BLOCK_PATTERN);
 			
 			Matcher msgBlkPatternMatcher = msgBlockPattern.matcher(message);
 			
@@ -288,7 +288,7 @@ public class ParserUtil
 				
 				HashMap<String,String> msgMap = new HashMap<String,String>();
 				
-				Pattern msgHeaderPattern = Pattern.compile(ParserPatterns.MSG_BLOCK_HEADER_PATTERN);
+				Pattern msgHeaderPattern = Pattern.compile(ParserConstants.MSG_BLOCK_HEADER_PATTERN);
 				
 				Matcher msgHeaderPatternMatcher = msgHeaderPattern.matcher(msgBlock);
 				
@@ -302,7 +302,7 @@ public class ParserUtil
 					fileLogger.writeLog("info", "Message Header Pattern Identified");
 				}
 				
-				Pattern msgBodyPattern = Pattern.compile(ParserPatterns.MSG_BLOCK_BODY_PATTERN);
+				Pattern msgBodyPattern = Pattern.compile(ParserConstants.MSG_BLOCK_BODY_PATTERN);
 				Matcher msgBodyPatternMatcher = msgBodyPattern.matcher(msgBlock);
 				String msgBody = null;
 				while(msgBodyPatternMatcher.find()) {
@@ -312,7 +312,7 @@ public class ParserUtil
 					fileLogger.writeLog("info", "Message Body Pattern Identified");
 				}
 				
-				Pattern umacPattern = Pattern.compile(ParserPatterns.MSG_UMAC_BLOCK_PATTERN);
+				Pattern umacPattern = Pattern.compile(ParserConstants.MSG_UMAC_BLOCK_PATTERN);
 				Matcher umacPatternMatcher = umacPattern.matcher(msgBlock);
 				String UMAC = null;
 				while(umacPatternMatcher.find()) {

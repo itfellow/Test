@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserPatterns;
+import com.omni.oesb.constants.ParserConstants;
 import com.omni.oesb.notification.Util.ParserUtil;
 import com.omni.oesb.omh.notification.TableInsert.TableDataInsert;
 
@@ -22,7 +22,7 @@ public class MsgParser{
 		String []result = new String[2]; 		// this array hold parserStatus 
 												// and variable to identify is UMAC present in the msg or not
 		
-		String parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
 		
 		result[0] = parseStatus;
 		
@@ -57,7 +57,7 @@ public class MsgParser{
 						
 						result[0] =  parseStatus;
 								
-						if(headerMap.get("IO_ID").equalsIgnoreCase("O") && parseStatus.equals(ParserPatterns.MSG_PARSE_SUCCESS)){
+						if(headerMap.get("IO_ID").equalsIgnoreCase("O") && parseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)){
 							
 							result[1] = msgMap.get("UMAC");		// return string value 0 or 1,
 																// 1  means UMAC is Present in File and 0, vice-versa
@@ -67,7 +67,7 @@ public class MsgParser{
 						}
 					}
 					catch(Exception e){
-						parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+						parseStatus = ParserConstants.MSG_PARSE_ERROR;
 						e.printStackTrace();
 						System.out.println("Message Parsing Error");
 						System.out.println("Some Data May be missing in file");
@@ -80,7 +80,7 @@ public class MsgParser{
 			}
 			catch(Exception e)
 			{
-				parseStatus = ParserPatterns.MSG_PARSE_ERROR;
+				parseStatus = ParserConstants.MSG_PARSE_ERROR;
 				e.printStackTrace();
 				
 				fileLogger.writeLog("severe", e.getMessage());
@@ -103,7 +103,7 @@ public class MsgParser{
 	
 	public String parseCsvMessage(String fileData)
 	{
-		String fileParseStatus=ParserPatterns.MSG_PARSE_ERROR;
+		String fileParseStatus=ParserConstants.MSG_PARSE_ERROR;
 		
 		try{
 			String columnName_values[]=fileData.split("\n"); 
@@ -116,7 +116,7 @@ public class MsgParser{
 			{
 			 
 				System.out.println("There is no proper data in file so file is ignored");	
-				return ParserPatterns.MSG_PARSE_IGNORED;	
+				return ParserConstants.MSG_PARSE_IGNORED;	
 			
 			}
 			
@@ -146,7 +146,7 @@ public class MsgParser{
 			
 		}
 		catch(Exception e){
-			fileParseStatus=ParserPatterns.MSG_PARSE_ERROR;
+			fileParseStatus=ParserConstants.MSG_PARSE_ERROR;
 			
 			e.printStackTrace();
 			fileLogger.writeLog("severe", e.getMessage());
