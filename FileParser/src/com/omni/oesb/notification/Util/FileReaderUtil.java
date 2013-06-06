@@ -194,7 +194,6 @@ public class FileReaderUtil
 	
 	public String readFileData(File src)  
 	{
-		
 		StringBuffer fileData = new StringBuffer();
 		
 		FileReader fileReader = null;
@@ -210,16 +209,6 @@ public class FileReaderUtil
 				
 				fileData.append(thisLine);
 				fileData.append("\n");
-				
-				/*int index = thisLine.indexOf("5500");
-				
-				if(index != -1)
-					fileData.append(System.getProperty("line.separator"));
-				
-				index = thisLine.indexOf("5561");
-				
-				if(index != -1)
-					fileData.append(System.getProperty("line.separator"));*/
 					
 				}
 			
@@ -227,10 +216,7 @@ public class FileReaderUtil
 		} 
 		catch(Exception e) 
 		{
-			 
-			 e.printStackTrace();
-			 //throw new Exception("Exception thrown by readFileData : FileReaderHelper"+e);
-			 
+			 e.printStackTrace();			 
 		} 
 		finally 
 		{
@@ -293,7 +279,6 @@ public class FileReaderUtil
 		
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
-		
 		try {
 			
 			if(!dest.exists()) {

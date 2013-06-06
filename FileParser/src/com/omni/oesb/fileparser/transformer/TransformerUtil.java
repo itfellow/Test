@@ -51,14 +51,14 @@ public final class TransformerUtil {
 					cal.set(Calendar.MINUTE,min);
 					// set Seconds
 					cal.set(Calendar.SECOND,0);
-		
+					
 				gregorianDateTime.setTime(cal.getTime());
 			
 				dateTime = DatatypeFactory.newInstance()
 					    .newXMLGregorianCalendar(gregorianDateTime);
 				dateTime.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
 				dateTime.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
-			
+				
 			}
 			catch(Exception e){
 				e.printStackTrace();
