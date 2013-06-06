@@ -302,6 +302,7 @@ public class test {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
    
         marshaller.marshal(element,System.out);
+        
 	}
 
 }
