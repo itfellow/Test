@@ -48,6 +48,7 @@ public class TableDataInsert extends TableData {
 					if(parseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)){
 						TransactionDtls transDtls = (TransactionDtls) nfDao.getObject(TransactionDtls.class,transId);
 						transDtls.setTransaction_status("2");
+						transDtls.setMessage_type("N10");
 						transDtls.setTransCompleteDate(new CurrentDate());
 						transDtls.setTransCompTime(credtitTime);
 						tablePojo[0] = transDtls;
