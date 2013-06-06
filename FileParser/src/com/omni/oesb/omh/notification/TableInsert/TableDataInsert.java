@@ -235,11 +235,13 @@ public class TableDataInsert extends TableData {
 							
 						if(commonAck.getStatus().equalsIgnoreCase("Y")){
 							updateFlag = 1;	
+							transDtls.setMessage_type("N10");
 							transDtls.setTransaction_status("2");
 							
 						}
 						else if(commonAck.getStatus().equalsIgnoreCase("N")){
 							updateFlag = 1;
+							transDtls.setMessage_type("N09");
 							transDtls.setTransaction_status("3");
 						}
 						
@@ -339,14 +341,17 @@ public class TableDataInsert extends TableData {
 							
 						TransactionDtls transDtls = (TransactionDtls) nfDao.getObject(TransactionDtls.class,UTR);
 						CommonAckStatusVo commonAck = (CommonAckStatusVo) tablePojo[1];
-							
+						
+						
 						if(commonAck.getStatus().equalsIgnoreCase("Y")){
 							updateFlag = 1;	
+							transDtls.setMessage_type("R09-ACK");	//hard coded need to change
 							transDtls.setTransaction_status("2");
 							
 						}
 						else if(commonAck.getStatus().equalsIgnoreCase("N")){
 							updateFlag = 1;
+							transDtls.setMessage_type("R09-NACK"); //hard coded need to change
 							transDtls.setTransaction_status("3");
 						}
 						
