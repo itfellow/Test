@@ -32,31 +32,22 @@
 
 			
 	
-			<mapping class="com.omni.omh.notification.data.MessageTypeMst"/>
-			<mapping class="com.omni.omh.notification.data.MessageHeader"/>
-			<mapping class="com.omni.omh.notification.data.TransactionDtls"/>
-			<mapping class="com.omni.omh.notification.data.MessageNotificationDtls"/>
+			<mapping class="com.omni.oesb.omh.notification.data.MessageTypeMst"/>
+			<mapping class="com.omni.oesb.omh.notification.data.MessageHeader"/>
+			<mapping class="com.omni.oesb.omh.notification.data.TransactionDtls"/>
+			<mapping class="com.omni.oesb.omh.notification.data.MessageNotificationDtls"/>
 			
 <!-- 		<mapping class="com.omni.omh.notification.data.BankAccountDtls"/>
 			<mapping class="com.omni.omh.notification.data.CustomerMst"/> -->
 			
-			<mapping class="com.omni.omh.notification.data.R41Data"/>
+			<mapping class="com.omni.oesb.omh.notification.data.R41Data"/>
 			<!-- <mapping class="com.omni.omh.notification.data.R42Data"/>
 			<mapping class="com.omni.omh.notification.data.R90Data"/>-->
-			<mapping class="com.omni.omh.notification.data.R09Data"/> 
+			<mapping class="com.omni.oesb.omh.notification.data.R09Data"/> 
 			
-			<mapping class="com.omni.omh.notification.data.N06Data"/>
-			<mapping class="com.omni.omh.notification.data.N09Data"/>
-			<mapping class="com.omni.omh.notification.data.N10Data"/> 
-			
-		
-	   
-	   		
-			
-
-	   	 
-
-	   		
+			<mapping class="com.omni.oesb.omh.notification.data.N06Data"/>
+			<mapping class="com.omni.oesb.omh.notification.data.N09Data"/>
+			<mapping class="com.omni.oesb.omh.notification.data.N10Data"/> 
 
     </session-factory>
 

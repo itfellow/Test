@@ -2,8 +2,6 @@ package com.omni.oesb.omh.notification.TableInsert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.constants.ParserConstants;
@@ -15,7 +13,6 @@ import com.omni.oesb.omh.notification.data.N10Data;
 import com.omni.oesb.omh.notification.data.R09Data;
 import com.omni.oesb.omh.notification.data.R41Data;
 import com.omni.oesb.omh.notification.data.TransactionDtls;
-import com.omni.util.common.CommonClass;
 import com.omni.util.common.CurrentDate;
 
 public class TableDataInsert extends TableData {
