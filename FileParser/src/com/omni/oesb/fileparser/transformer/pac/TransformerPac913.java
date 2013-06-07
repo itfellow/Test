@@ -205,7 +205,6 @@ public class TransformerPac913 {
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			
 			marshaller.marshal(element,System.out);
-			
 		} catch (PropertyException e) {
 			e.printStackTrace();
 		} catch (JAXBException e) {
