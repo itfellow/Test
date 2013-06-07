@@ -54,7 +54,7 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 		
 	}
 	
-	public String createDocumentBody(String BusinessServiceRule){
+	private String createDocumentBody(String BusinessServiceRule){
 		
 		try{
 			
@@ -311,7 +311,7 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 		return null;
 	}
 	
-	public void mergePac813(String fileName,String []mergeFile){
+	private void mergePac813(String fileName,String []mergeFile){
 		
 		StringBuffer fileData = new StringBuffer();
 		
