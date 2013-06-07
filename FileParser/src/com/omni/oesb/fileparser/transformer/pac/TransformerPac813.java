@@ -43,13 +43,14 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
 
 public final class TransformerPac813 extends TransformerPacAppHeader{
 	
-	public void createPac813(){
+	public void createPac813(String fileName){
 		
 		String []mergeFile = new String[2];
 		
 		mergeFile[0] = CreadAppHeader("FIToFICustomerCredit");
 		mergeFile[1] = createDocumentBody("FIToFICustomerCredit");
 		
+		mergePac813(fileName,mergeFile);
 		
 	}
 	
@@ -291,8 +292,7 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 	        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 	        
 	        
-	        String pathStr = bundle.getString("xmlCacheFolder").trim();
-	        File path = new File(pathStr);
+	        File path = new File(xmlCachePath);
 
 	        
 	        String docBodyAbsPath = path.getAbsolutePath()+"\\DocBody"+transId+".xml";
@@ -311,7 +311,7 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 		return null;
 	}
 	
-	public void mergePac813(String []mergeFile){
+	public void mergePac813(String fileName,String []mergeFile){
 		
 		StringBuffer fileData = new StringBuffer();
 		
@@ -377,7 +377,8 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 		
 		fileData.append("</RequestPayload>");
 		
-		File dest = new File("d:\\pac8_shinoj.xml");
+		File dest = new File(xmlTransformPath+"\\"+fileName+".xml");
+		
 		fileReaderUtil.writeData(dest, fileData,false);
 		
 	}
@@ -388,7 +389,7 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 		as[0] = "C:\\omh\\parserConf\\File Adapter\\xmlCache\\AppHeadSBIC201310181000000301.xml";
 		as[1] = "C:\\omh\\parserConf\\File Adapter\\xmlCache\\DocBodySBIC20131018R100000301.xml";
 		
-		new TransformerPac813().mergePac813(as);
+		new TransformerPac813().mergePac813("yeahh",as);
 	}
 
 }
