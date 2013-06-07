@@ -27,8 +27,14 @@ public  class TransformerPacAppHeader {
 	
 	protected ResourceBundle bundle = PropAccess.getResourceBundle();
 	
+	String xmlCachePath = bundle.getString("xmlCacheFolder").trim();
+	
+	String xmlTransformPath = bundle.getString("xmlTransformPath").trim();
+	
 	public String CreadAppHeader(String BusinessServiceRule){
+		
 		try{
+			
 			ObjectFactory factoryHead001 = new ObjectFactory();
 	
 			BusinessApplicationHeaderV01 appHeadr = new BusinessApplicationHeaderV01();
