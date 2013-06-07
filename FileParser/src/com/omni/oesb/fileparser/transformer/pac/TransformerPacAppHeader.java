@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 
 import com.omni.oesb.fileparser.transformer.TransformerUtil;
+import com.omni.oesb.notification.Util.FileReaderUtil;
 import com.omni.oesb.transformer.xml.head_001_001_01.BranchAndFinancialInstitutionIdentification5;
 import com.omni.oesb.transformer.xml.head_001_001_01.BusinessApplicationHeaderV01;
 import com.omni.oesb.transformer.xml.head_001_001_01.ClearingSystemMemberIdentification2;
@@ -22,9 +23,11 @@ import com.omni.util.common.PropAccess;
 
 public  class TransformerPacAppHeader {
 	
+	protected FileReaderUtil fileReaderUtil = new FileReaderUtil();
+	
 	protected ResourceBundle bundle = PropAccess.getResourceBundle();
 	
-	public void CreadAppHeader(String pacTyp,String BusinessServiceRule){
+	public String CreadAppHeader(String BusinessServiceRule){
 		try{
 			ObjectFactory factoryHead001 = new ObjectFactory();
 	
@@ -69,7 +72,7 @@ public  class TransformerPacAppHeader {
 			String transId = "SBIC201310181000000301";
 			appHeadr.setBizMsgIdr(transId);
 			
-			appHeadr.setMsgDefIdr(pacTyp);
+			appHeadr.setMsgDefIdr("pacs.008.001.03");
 			
 			// set business service Rule
 			appHeadr.setBizSvc(BusinessServiceRule);
@@ -97,17 +100,21 @@ public  class TransformerPacAppHeader {
 			
 	        String pathStr = bundle.getString("xmlCacheFolder").trim();
 	        File path = new File(pathStr);
-	        File createXml = new File(path.getAbsolutePath()+"\\AppHead"+transId+".xml");
+	        
+	        String appHeaderAbsPath = path.getAbsolutePath()+"\\AppHead"+transId+".xml";
+	        File createXml = new File(appHeaderAbsPath);
+	        
 	        marshaller.marshal(element,createXml);
 			
+	        return appHeaderAbsPath;
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		
+		return null;
 	}
 	
 	public static void main(String ar[]){
-		new TransformerPacAppHeader().CreadAppHeader("pacs.008.001.03","FIToFICustomerCredit");
+//		new TransformerPacAppHeader().CreadAppHeader("pacs.008.001.03","FIToFICustomerCredit");
 	}
 }

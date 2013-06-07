@@ -1,6 +1,8 @@
 package com.omni.oesb.fileparser.transformer.pac;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.math.BigDecimal;
 
 import javax.xml.bind.JAXBContext;
@@ -41,9 +43,17 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
 
 public final class TransformerPac813 extends TransformerPacAppHeader{
 	
-	public void createPac813Xml(){
+	public void createPac813(){
 		
-		CreadAppHeader("pacs.008.001.03","FIToFICustomerCredit");
+		String []mergeFile = new String[2];
+		
+		mergeFile[0] = CreadAppHeader("FIToFICustomerCredit");
+		mergeFile[1] = createDocumentBody("FIToFICustomerCredit");
+		
+		
+	}
+	
+	public String createDocumentBody(String BusinessServiceRule){
 		
 		try{
 			
@@ -142,7 +152,7 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 			LocalInstrument2Choice LclInstrm = new LocalInstrument2Choice();
 			
 			// set proprietry 'RTGSFIToFICredit' or 'RTGSFIToFICustomerCredit’ or 'RTGSOwnAccTtransfer' or 'RTGSPaymentReturn' or 'RTGSNetSettlementXXzNN'
-			LclInstrm.setPrtry("FIToFICustomerCredit");
+			LclInstrm.setPrtry(BusinessServiceRule);
 			
 			paymentTypeInfo.setLclInstrm(LclInstrm);
 			
@@ -283,23 +293,100 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 	        
 	        String pathStr = bundle.getString("xmlCacheFolder").trim();
 	        File path = new File(pathStr);
-	        File createXml = new File(path.getAbsolutePath()+"\\DocBody"+transId+".xml");
+	        
+	        String docBodyAbsPath = path.getAbsolutePath()+"\\DocBody"+transId+".xml";
+	        File createXml = new File(docBodyAbsPath);
+	        
 	        marshaller.marshal(element,createXml);
 	        marshaller.marshal(element,System.out);
 	        
+	        return docBodyAbsPath;
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 	
-	public void mergePac813(){
+	public void mergePac813(String []mergeFile){
 		
+		StringBuffer fileData = new StringBuffer();
+		
+		int len = mergeFile.length;
+		
+		for(String path : mergeFile){
+			if(path!=null){
+				FileReader fileReader = null;
+				BufferedReader bufferedReader = null;
+				
+				try {
+					
+					fileReader = new FileReader(path);
+					bufferedReader = new BufferedReader(fileReader);
+					
+					String thisLine = null;
+					
+					int lineCount = -1;
+					
+					while((thisLine = bufferedReader.readLine()) != null) {
+						
+						lineCount++;
+						
+						if(lineCount > 2){
+							fileData.append(thisLine);
+						}
+						else if(lineCount==0){
+							continue;
+						}
+						else if(lineCount==1){
+							
+							if(path.equals(mergeFile[0])){
+								
+								fileData.append("<RequestPayload>\n<AppHdr xmlns:xsi=\"urn:iso:std:iso:20022:tech:xsd:Header\" xmlns=\"urn:iso:std:iso:20022:tech:xsd:head.001.001.01\">");
+								
+							}
+							else if(path.equals(mergeFile[1])){
+								
+								fileData.append("<Document xmlns:xsi=\"urn:iso:std:iso:20022:tech:xsd:R41\" xmlns=\"urn:iso:std:iso:20022:tech:xsd:pacs.008.001.03\">");
+								
+							}
+						}
+						
+						
+						
+						fileData.append("\n");
+
+					}
+					
+					if(fileReader != null)
+						fileReader.close();
+					
+					if(bufferedReader != null)
+						bufferedReader.close();
+					
+				} 
+				catch(Exception e) 
+				{
+					 e.printStackTrace();			 
+				} 
+			}
+		}
+		
+		fileData.append("</RequestPayload>");
+		
+		File dest = new File("d:\\pac8_shinoj.xml");
+		fileReaderUtil.writeData(dest, fileData,false);
 		
 	}
 	
 	public static void main(String ar[]){
-		new TransformerPac813().createPac813Xml();
+// 		new TransformerPac813().createPac813();
+		String []as = new String[2];
+		as[0] = "C:\\omh\\parserConf\\File Adapter\\xmlCache\\AppHeadSBIC201310181000000301.xml";
+		as[1] = "C:\\omh\\parserConf\\File Adapter\\xmlCache\\DocBodySBIC20131018R100000301.xml";
+		
+		new TransformerPac813().mergePac813(as);
 	}
 
 }

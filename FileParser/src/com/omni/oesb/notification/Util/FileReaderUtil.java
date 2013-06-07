@@ -237,20 +237,11 @@ public class FileReaderUtil
 		return fileData.toString();
 	}
 	
-	public void WriteUMACData(File src){
+	public void writeData(File dest,StringBuffer data,boolean isAppend){
 		
 		try{
-			
-    		StringBuffer data = new StringBuffer("{UMAC:");
-    		
-    		data.append(SignData.execute());
-    		
-    		data.append("}");
-    		
-    		//true = append file
-    		
-    		FileWriter fileWritter = new FileWriter(src,true);
-    	        
+			FileWriter fileWritter = new FileWriter(dest,isAppend);
+	        
     		BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
     	    bufferWritter.write(data.toString());
     	    
@@ -263,16 +254,31 @@ public class FileReaderUtil
     	    	
     	    	fileWritter.close();
     	    }
-    	    
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			fileLogger.writeLog("severe", e.getMessage());
+    		fileLogger.writeLog("severe", "Error When Appending to "+dest.getAbsolutePath());
+		}
+		
+	}
+	
+	private void WriteUMACData(File src){
+			
+    		StringBuffer data = new StringBuffer("{UMAC:");
+    		
+    		data.append(SignData.execute());
+    		
+    		data.append("}");
+    		
+    		//true = append file
+    		
+    		
+    		writeData(src,data,true);
+    		
 	        System.out.println("Digital Signature Appended");
 	        fileLogger.writeLog("info", "UMAC With Digital Signature Appended at EOF");
-    	}catch(IOException e){
-    		
-    		e.printStackTrace();
-    		fileLogger.writeLog("severe", e.getMessage());
-    		fileLogger.writeLog("severe", "Error When Appending Digital Signature");
-    		
-    	}
+  
 	}
 	
 	public void moveFile(File sourceFile, File dest) throws Exception {
