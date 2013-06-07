@@ -27,7 +27,6 @@ public class TransformerPac913 {
 		activeCrncyAndAmt.setCcy("INR");
 		activeCrncyAndAmt.setValue(new BigDecimal(3453453));
 		grpHdr.setTtlIntrBkSttlmAmt(activeCrncyAndAmt);
-		
 		grpHdr.setIntrBkSttlmDt(TransformerUtil.convertToXMLGregorianDateTime("20131018","1000"));
 
 		SettlementInstruction1 settlmntInf = new SettlementInstruction1();
@@ -48,6 +47,9 @@ public class TransformerPac913 {
 		
 		/*InstdAdt*/
 		
+	}
+	public static void main(String[] args) {
+		new TransformerPac913().createPac913();
 	}
 
 }
