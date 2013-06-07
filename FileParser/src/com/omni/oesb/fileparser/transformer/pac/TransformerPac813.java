@@ -293,11 +293,13 @@ public final class TransformerPac813 extends TransformerPacAppHeader{
 	        
 	        String pathStr = bundle.getString("xmlCacheFolder").trim();
 	        File path = new File(pathStr);
+
 	        
 	        String docBodyAbsPath = path.getAbsolutePath()+"\\DocBody"+transId+".xml";
 	        File createXml = new File(docBodyAbsPath);
 	        
 	        marshaller.marshal(element,createXml);
+
 	        marshaller.marshal(element,System.out);
 	        
 	        return docBodyAbsPath;
