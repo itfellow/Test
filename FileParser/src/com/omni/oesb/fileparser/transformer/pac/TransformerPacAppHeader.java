@@ -1,6 +1,8 @@
 package com.omni.oesb.fileparser.transformer.pac;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
@@ -31,7 +33,7 @@ public  class TransformerPacAppHeader {
 	
 	String xmlTransformPath = bundle.getString("xmlTransformPath").trim();
 	
-	public String CreadAppHeader(String BusinessServiceRule){
+	protected String CreadAppHeader(String BusinessServiceRule){
 		
 		try{
 			
@@ -120,6 +122,78 @@ public  class TransformerPacAppHeader {
 		return null;
 	}
 	
+protected void mergePac(String fileName,String []mergeFile){
+		
+		StringBuffer fileData = new StringBuffer();
+		
+		int len = mergeFile.length;
+		
+		for(String path : mergeFile){
+			if(path!=null){
+				FileReader fileReader = null;
+				BufferedReader bufferedReader = null;
+				
+				try {
+					
+					fileReader = new FileReader(path);
+					bufferedReader = new BufferedReader(fileReader);
+					
+					String thisLine = null;
+					
+					int lineCount = -1;
+					
+					while((thisLine = bufferedReader.readLine()) != null) {
+						
+						lineCount++;
+						
+						if(lineCount > 2){
+							fileData.append(thisLine);
+						}
+						else if(lineCount==0){
+							continue;
+						}
+						else if(lineCount==1){
+							
+							if(path.equals(mergeFile[0])){
+								
+								fileData.append("<RequestPayload>\n<AppHdr xmlns:xsi=\"urn:iso:std:iso:20022:tech:xsd:Header\" xmlns=\"urn:iso:std:iso:20022:tech:xsd:head.001.001.01\">");
+								
+							}
+							else if(path.equals(mergeFile[1])){
+								
+								fileData.append("<Document xmlns:xsi=\"urn:iso:std:iso:20022:tech:xsd:R41\" xmlns=\"urn:iso:std:iso:20022:tech:xsd:pacs.008.001.03\">");
+								
+							}
+						}
+						
+						
+						
+						fileData.append("\n");
+
+					}
+					
+					if(fileReader != null)
+						fileReader.close();
+					
+					if(bufferedReader != null)
+						bufferedReader.close();
+					
+				} 
+				catch(Exception e) 
+				{
+					 e.printStackTrace();			 
+				} 
+			}
+		}
+		
+		fileData.append("</RequestPayload>");
+		
+		File dest = new File(xmlTransformPath+"\\"+fileName+".xml");
+		
+		fileReaderUtil.writeData(dest, fileData,false);
+		
+	}
+
 	public static void main(String ar[]){
 //		new TransformerPacAppHeader().CreadAppHeader("pacs.008.001.03","FIToFICustomerCredit");
 	}
