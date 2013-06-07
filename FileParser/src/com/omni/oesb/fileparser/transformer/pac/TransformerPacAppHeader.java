@@ -9,19 +9,20 @@ import javax.xml.bind.Marshaller;
 
 import com.omni.oesb.fileparser.transformer.TransformerUtil;
 import com.omni.oesb.transformer.xml.head_001_001_01.BranchAndFinancialInstitutionIdentification5;
-import com.omni.oesb.transformer.xml.head_001_001_01.BusinessApplicationHeader1;
 import com.omni.oesb.transformer.xml.head_001_001_01.BusinessApplicationHeaderV01;
 import com.omni.oesb.transformer.xml.head_001_001_01.ClearingSystemMemberIdentification2;
+import com.omni.oesb.transformer.xml.head_001_001_01.CopyDuplicate1Code;
 import com.omni.oesb.transformer.xml.head_001_001_01.FinancialInstitutionIdentification8;
 import com.omni.oesb.transformer.xml.head_001_001_01.ObjectFactory;
 import com.omni.oesb.transformer.xml.head_001_001_01.Party9Choice;
+import com.omni.oesb.transformer.xml.head_001_001_01.SignatureEnvelope;
 import com.omni.util.common.PropAccess;
 
 
 
-public class TransformerPacAppHeader {
+public  class TransformerPacAppHeader {
 	
-	private ResourceBundle bundle 		= PropAccess.getResourceBundle();
+	protected ResourceBundle bundle = PropAccess.getResourceBundle();
 	
 	public void CreadAppHeader(String pacTyp,String BusinessServiceRule){
 		try{
@@ -65,14 +66,26 @@ public class TransformerPacAppHeader {
 			appHeadr.setTo(partyChoice);
 			
 			// set business Message Id (accorndng to XML given by kumari transactionID)
-			appHeadr.setBizMsgIdr("SBIC201310181000000301");
+			String transId = "SBIC201310181000000301";
+			appHeadr.setBizMsgIdr(transId);
 			
 			appHeadr.setMsgDefIdr(pacTyp);
 			
 			// set business service Rule
 			appHeadr.setBizSvc(BusinessServiceRule);
 			
-			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime("", ""));
+			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime("20131018", "0900"));
+			
+			appHeadr.setCpyDplct(CopyDuplicate1Code.CODU);
+			
+			SignatureEnvelope signEnvlop = new SignatureEnvelope();
+			
+			
+			
+			signEnvlop.setAny(null);
+			
+			appHeadr.setSgntr(signEnvlop);
+			
 			/************* Combining all objects to form XMl *********/
 			
 			JAXBContext context = JAXBContext.newInstance("com.omni.oesb.transformer.xml.head_001_001_01");
@@ -82,10 +95,10 @@ public class TransformerPacAppHeader {
 	   
 	        marshaller.marshal(element,System.out);
 			
-//	        String pathStr = bundle.getString("xmlCacheFolder").trim();
-//	        File path = new File(pathStr);
-//	        File createXml = new File(path.getAbsolutePath()+"\\appHeader.xml");
-//	        marshaller.marshal(element,createXml);
+	        String pathStr = bundle.getString("xmlCacheFolder").trim();
+	        File path = new File(pathStr);
+	        File createXml = new File(path.getAbsolutePath()+"\\AppHead"+transId+".xml");
+	        marshaller.marshal(element,createXml);
 			
 		}
 		catch(Exception e){

@@ -2,7 +2,6 @@ package com.omni.oesb.fileparser.transformer.pac;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -39,12 +38,13 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.RemittanceInformation7;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.ServiceLevel8Choice;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementInstruction1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
-import com.omni.util.common.PropAccess;
 
-public final class TransformerPac813 {
-	private ResourceBundle bundle 		= PropAccess.getResourceBundle();
+public final class TransformerPac813 extends TransformerPacAppHeader{
 	
-	public void createDocumentBody(){
+	public void createPac813Xml(){
+		
+		CreadAppHeader("pacs.008.001.03","FIToFICustomerCredit");
+		
 		try{
 			
 			ObjectFactory factoryPac008 = new ObjectFactory();
@@ -120,7 +120,8 @@ public final class TransformerPac813 {
 			// set utr no
 			pmtId.setEndToEndId("/XUTR/TESTH11000000301");
 			// set tranaction Id
-			pmtId.setTxId("SBIC20131018R100000301");
+			String transId =  "SBIC20131018R100000301";
+			pmtId.setTxId(transId);
 			
 			cdtTrfTxInf.setPmtId(pmtId);
 			
@@ -282,7 +283,7 @@ public final class TransformerPac813 {
 	        
 	        String pathStr = bundle.getString("xmlCacheFolder").trim();
 	        File path = new File(pathStr);
-	        File createXml = new File(path.getAbsolutePath()+"\\pac08Body.xml");
+	        File createXml = new File(path.getAbsolutePath()+"\\DocBody"+transId+".xml");
 	        marshaller.marshal(element,createXml);
 	        marshaller.marshal(element,System.out);
 	        
@@ -292,8 +293,13 @@ public final class TransformerPac813 {
 		}
 	}
 	
+	public void mergePac813(){
+		
+		
+	}
+	
 	public static void main(String ar[]){
-		new TransformerPac813().createDocumentBody();
+		new TransformerPac813().createPac813Xml();
 	}
 
 }
