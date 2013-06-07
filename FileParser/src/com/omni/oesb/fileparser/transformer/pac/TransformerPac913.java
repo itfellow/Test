@@ -38,10 +38,12 @@ import com.omni.oesb.transformer.xml.pacs009_001_03.ServiceLevel8Choice;
 import com.omni.oesb.transformer.xml.pacs009_001_03.SettlementInstruction1;
 import com.omni.oesb.transformer.xml.pacs009_001_03.SettlementMethod1Code;
 
-public class TransformerPac913 {
+public class TransformerPac913 extends TransformerPacHeader implements Transformer{
 	
-	public void createPac913() {
+	public void convertToNGRTGS(String fileName){
+		
 		try {
+			
 			ObjectFactory factory913 = new ObjectFactory();
 			
 			/*GrpHdr*/
@@ -214,7 +216,7 @@ public class TransformerPac913 {
 	}
 	
 	public static void main(String[] args) {
-		new TransformerPac913().createPac913();
+		new TransformerPac913().convertToNGRTGS("asd");
 	}
 
 

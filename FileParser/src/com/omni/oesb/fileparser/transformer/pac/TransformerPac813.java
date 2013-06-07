@@ -39,9 +39,9 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.ServiceLevel8Choice;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementInstruction1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
 
-public final class TransformerPac813 extends TransformerPacAppHeader{
+public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
 	
-	public void createPac813(String fileName){
+	public void convertToNGRTGS(String fileName){
 		
 		String []mergeFile = new String[2];
 		

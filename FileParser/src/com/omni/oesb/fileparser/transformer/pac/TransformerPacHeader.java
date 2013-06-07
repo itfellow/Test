@@ -23,16 +23,18 @@ import com.omni.util.common.PropAccess;
 
 
 
-public  class TransformerPacAppHeader {
+public abstract  class TransformerPacHeader {
 	
 	protected FileReaderUtil fileReaderUtil = new FileReaderUtil();
 	
 	protected ResourceBundle bundle = PropAccess.getResourceBundle();
 	
+	String pathStr = bundle.getString("xmlCacheFolder").trim();
+	
 	String xmlCachePath = bundle.getString("xmlCacheFolder").trim();
 	
 	String xmlTransformPath = bundle.getString("xmlTransformPath").trim();
-	
+		
 	protected String CreadAppHeader(String BusinessServiceRule){
 		
 		try{
@@ -106,7 +108,7 @@ public  class TransformerPacAppHeader {
 	   
 	        marshaller.marshal(element,System.out);
 			
-	        String pathStr = bundle.getString("xmlCacheFolder").trim();
+	        
 	        File path = new File(pathStr);
 	        
 	        String appHeaderAbsPath = path.getAbsolutePath()+"\\AppHead"+transId+".xml";
@@ -125,9 +127,7 @@ public  class TransformerPacAppHeader {
 	protected void mergePac(String fileName,String []mergeFile){
 		
 		StringBuffer fileData = new StringBuffer();
-		
-		int len = mergeFile.length;
-		
+				
 		for(String path : mergeFile){
 			if(path!=null){
 				FileReader fileReader = null;

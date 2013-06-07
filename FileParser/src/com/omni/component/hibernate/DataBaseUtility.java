@@ -228,7 +228,7 @@ public class DataBaseUtility {
 	 * @return {@link List}
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Object> selectRecord(final String HQL_QUERY) {
+	public  List<Object> selectRecord(final String HQL_QUERY) {
 		List<Object> results = null;
 		
 		Session sessionSelectRecord = null;
