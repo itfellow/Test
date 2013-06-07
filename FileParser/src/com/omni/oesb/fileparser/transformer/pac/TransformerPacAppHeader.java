@@ -122,7 +122,7 @@ public  class TransformerPacAppHeader {
 		return null;
 	}
 	
-protected void mergePac(String fileName,String []mergeFile){
+	protected void mergePac(String fileName,String []mergeFile){
 		
 		StringBuffer fileData = new StringBuffer();
 		
