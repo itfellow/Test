@@ -14,7 +14,7 @@ public class TransformerHandler {
 	
 	public TransformerHandler(){
 		
-		List<Object> data = dbUtil.selectRecord("SELECT ");
+		List<Object> data = dbUtil.selectRecord("SELECT pac_name FROM XmlTransformerMap");
 		
 	}
 	
