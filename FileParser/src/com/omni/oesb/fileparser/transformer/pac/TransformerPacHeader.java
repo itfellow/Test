@@ -23,7 +23,7 @@ import com.omni.util.common.PropAccess;
 
 
 
-public abstract  class TransformerPacHeader {
+public abstract class TransformerPacHeader {
 	
 	protected FileReaderUtil fileReaderUtil = new FileReaderUtil();
 	
@@ -195,6 +195,6 @@ public abstract  class TransformerPacHeader {
 	}
 
 	public static void main(String ar[]){
-//		new TransformerPacAppHeader().CreadAppHeader("pacs.008.001.03","FIToFICustomerCredit");
+//		new TransformerPacHeader();
 	}
 }

@@ -48,7 +48,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		mergeFile[0] = CreadAppHeader("FIToFICustomerCredit");
 		mergeFile[1] = createDocumentBody("FIToFICustomerCredit");
 		
-		mergePac(fileName,mergeFile);
+		mergePac(fileName, mergeFile);
 		
 	}
 	

@@ -22,24 +22,28 @@ public class TransformerHandler {
 		
 		try {
 			
-			Transformer obj= (Transformer) Class.forName("com.omni.oesb.fileparser.transformer.pac.TransformerPac813").newInstance();
-			obj.convertToNGRTGS("ds");
+			Transformer tranformer= (Transformer) Class.forName("com.omni.oesb.fileparser.transformer.pac.TransformerPac813").newInstance();
+			
+			tranformer.convertToNGRTGS("ds");
 		
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
+		
 		}
 		
 	}
 	
 	public static void main(String []ar){
-		
+
 		new TransformerHandler();
 		
 	}
