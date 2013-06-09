@@ -35,7 +35,8 @@ public interface ParserConstants {
 	
 	//	Message Maps	//
 	
-	HashMap<String, String> MESSAGE_FORMAT_MAP = new HashMap<String, String>();
+	HashMap<String, String> NEFT_CODE_MAP = new HashMap<String, String>();
 	
+	HashMap<String, String> RTGS_CODE_MAP = new HashMap<String, String>();
 	
 }

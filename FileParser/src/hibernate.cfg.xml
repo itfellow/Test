@@ -48,6 +48,7 @@
 			<mapping class="com.omni.oesb.omh.notification.data.N06Data"/>
 			<mapping class="com.omni.oesb.omh.notification.data.N09Data"/>
 			<mapping class="com.omni.oesb.omh.notification.data.N10Data"/> 
+			<mapping class="com.omni.oesb.data.XmlTransformerMap"/>
 
     </session-factory>
 
