@@ -10,7 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class DataBaseUtility {
+public class DatabaseUtil {
 
 	
 	private Session getSession() {

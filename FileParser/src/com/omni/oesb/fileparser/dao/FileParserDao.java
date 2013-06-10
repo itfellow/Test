@@ -5,12 +5,12 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
-import com.omni.component.hibernate.DataBaseUtility;
+import com.omni.component.hibernate.DatabaseUtil;
 import com.omni.component.hibernate.HibernateUtil;
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.constants.ParserConstants;
 
-public final class FileParserDao extends DataBaseUtility {
+public final class FileParserDao extends DatabaseUtil {
 	
 	private final FileLogger fileLogger  = FileLogger.getFileLogger(this.getClass().getName());
 	/**

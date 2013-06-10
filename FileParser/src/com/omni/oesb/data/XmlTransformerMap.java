@@ -22,6 +22,8 @@ public class XmlTransformerMap {
 	@Column(name = "TRANSFORMER_CLASS_NAME")
 	private String tranformer_class_name = null;
 	
+	public XmlTransformerMap(){}
+	
 	@Fetch(FetchMode.SELECT)
 	public int getId() {
 		return id;

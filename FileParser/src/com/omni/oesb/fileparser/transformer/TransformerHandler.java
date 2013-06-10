@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.omni.component.hibernate.DataBaseUtility;
+import com.omni.component.hibernate.DatabaseUtil;
 import com.omni.oesb.fileparser.transformer.pac.Transformer;
 
 public class TransformerHandler {
 	
-	private static DataBaseUtility dbUtil = new DataBaseUtility();
+	private static DatabaseUtil dbUtil = new DatabaseUtil();
 	
 	private static final HashMap<String, String> xmlPacMap = new HashMap<String, String>();
 	
