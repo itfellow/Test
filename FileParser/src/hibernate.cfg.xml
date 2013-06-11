@@ -51,6 +51,7 @@
 			
 			<mapping class="com.omni.oesb.data.XmlTransformerMap"/>
 			<mapping class="com.omni.oesb.data.NeftCodeMap"/>
+			<mapping class="com.omni.oesb.data.RtgsCodeMap"/>
     </session-factory>
 
 </hibernate-configuration>

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserConstants;
-import com.omni.oesb.notification.Util.ParserUtil;
+import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.fileparser.Util.ParserUtil;
 import com.omni.oesb.omh.notification.TableInsert.TableDataInsert;
 
 
-public class MsgParser{
+public class MessageParser{
 	
 	private final FileLogger fileLogger  = FileLogger.getFileLogger(this.getClass().getName());
 	
@@ -17,12 +17,18 @@ public class MsgParser{
 
 	private final TableDataInsert dataInsert = new TableDataInsert();
 	
+	private final MessageDataFilter msgDataFilter = new MessageDataFilter();
+	
+	private HashMap<String,String> msgMap = null;
+	private HashMap<String,String> headerMap = null;
+	HashMap<String,String> msgBodyMap =null;
+	
 	public String[] parseTxtFile(String message) 
 	{
 		String []result = new String[2]; 		// this array hold parserStatus 
 												// and variable to identify is UMAC present in the msg or not
 		
-		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parseStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		result[0] = parseStatus;
 		
@@ -42,22 +48,23 @@ public class MsgParser{
 					try
 					{
 
-						HashMap<String,String> msgMap = messageContent.get(i - messageListSize);
+						msgMap = messageContent.get(i - messageListSize);
 						
 						String msgHeader = msgMap.get("MSG_HEADER");
 						
 						String msgBody = msgMap.get("MSG_BODY");
 						
-					
+						headerMap = parserUtil.parseHeader(msgHeader);
 						
-						HashMap<String,String> headerMap = parserUtil.parseHeader(msgHeader);
-						HashMap<String,String> msgBodyMap = parserUtil.parserBody(msgBody);			
+						msgBodyMap = parserUtil.parserBody(msgBody);			
+						
+						msgBodyMap = msgDataFilter.filterMsgBodyData(headerMap.get("MSG_SUBTYPE"),msgBodyMap);
 						
 						parseStatus = dataInsert.insertTxtData(headerMap,msgBodyMap);
 						
 						result[0] =  parseStatus;
 								
-						if(headerMap.get("IO_ID").equalsIgnoreCase("O") && parseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)){
+						if(headerMap.get("IO_ID").equalsIgnoreCase("O") && parseStatus.equals(AppConstants.MSG_PARSE_SUCCESS)){
 							
 							result[1] = msgMap.get("UMAC");		// return string value 0 or 1,
 																// 1  means UMAC is Present in File and 0, vice-versa
@@ -67,12 +74,17 @@ public class MsgParser{
 						}
 					}
 					catch(Exception e){
-						parseStatus = ParserConstants.MSG_PARSE_ERROR;
+						
+						parseStatus = AppConstants.MSG_PARSE_ERROR;
+						
 						e.printStackTrace();
+						
 						System.out.println("Message Parsing Error");
+						
 						System.out.println("Some Data May be missing in file");
 						
 						fileLogger.writeLog("severe", e.getMessage());
+						
 						fileLogger.writeLog("severe", "Message Parsing Failed Message Pattern Matching Error");
 					}
 				}
@@ -80,10 +92,12 @@ public class MsgParser{
 			}
 			catch(Exception e)
 			{
-				parseStatus = ParserConstants.MSG_PARSE_ERROR;
+				parseStatus = AppConstants.MSG_PARSE_ERROR;
+				
 				e.printStackTrace();
 				
 				fileLogger.writeLog("severe", e.getMessage());
+				
 				fileLogger.writeLog("severe", "Error Occured MsgParser Class: parseMessage Method");
 			}
 		
@@ -103,7 +117,7 @@ public class MsgParser{
 	
 	public String parseCsvMessage(String fileData)
 	{
-		String fileParseStatus=ParserConstants.MSG_PARSE_ERROR;
+		String fileParseStatus=AppConstants.MSG_PARSE_ERROR;
 		
 		try{
 			String columnName_values[]=fileData.split("\n"); 
@@ -116,7 +130,8 @@ public class MsgParser{
 			{
 			 
 				System.out.println("There is no proper data in file so file is ignored");	
-				return ParserConstants.MSG_PARSE_IGNORED;	
+				
+				return AppConstants.MSG_PARSE_IGNORED;	
 			
 			}
 			
@@ -127,9 +142,9 @@ public class MsgParser{
 			    csv[i]=new ArrayList<String>();			// Created ArrayList Inside and ArrayList
 		   												// to store Dynamic Data
 		  
-			for(String a:columnName_values)
+			for(String values:columnName_values)
 			{
-			    String data[]=a.split(",");
+			    String data[]=values.split(",");
 			    
 			    for(String b:data)
 			    {
@@ -146,10 +161,13 @@ public class MsgParser{
 			
 		}
 		catch(Exception e){
-			fileParseStatus=ParserConstants.MSG_PARSE_ERROR;
+			
+			fileParseStatus=AppConstants.MSG_PARSE_ERROR;
 			
 			e.printStackTrace();
+			
 			fileLogger.writeLog("severe", e.getMessage());
+			
 			fileLogger.writeLog("severe", "Error Occurred class: MsgParser Method: parseCsvMessage");
 		}
 		

@@ -9,17 +9,17 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Table(name = "neft_code_map")
-public class NeftCodeMap {
-	
+@Table(name = "rtgs_code_map")
+public class RtgsCodeMap {
+
 	@Id
 	@Column(name = "MSG_CODE")
 	private String msg_code = null;
 	
 	@Column(name = "CODE_VALUE")
 	private String code_value = null;
-
-	public NeftCodeMap(){}
+	
+	public RtgsCodeMap() {}
 	
 	@Fetch(FetchMode.SELECT)
 	public String getMsg_code() {

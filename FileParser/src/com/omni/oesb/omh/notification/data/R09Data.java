@@ -22,6 +22,9 @@ public class R09Data {
 	@Column(name = "STTLTME")
 	private String settelment_time;
 	
+	@Column(name = "HEADER_ID")
+	private Long header_id;
+
 	public R09Data() {}
 
 	public String getTransaction_refno() {
@@ -56,5 +59,12 @@ public class R09Data {
 		this.settelment_time = settelment_time;
 	}
 	
+	public Long getHeader_id() {
+		return header_id;
+	}
+
+	public void setHeader_id(Long header_id) {
+		this.header_id = header_id;
+	}
 	
 }

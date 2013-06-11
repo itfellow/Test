@@ -57,12 +57,6 @@ public class R41Data {
 	@Column(name = "ACCOUT_WITH_INSTITUTION")
 	private String accout_with_institution;
 	
-	@Column(name = "PAYMENT_DTLS")
-	private String payment_dtls;
-	
-	@Column(name = "CHARGES_DTLS")
-	private String charges_dtls;
-	
 	@Column(name = "SENDER_TO_RECEIVER_INFO")
 	private String sender_to_receiver_info;
 	
@@ -194,21 +188,7 @@ public class R41Data {
 		this.accout_with_institution = accout_with_institution;
 	}
 
-	public String getPayment_dtls() {
-		return payment_dtls;
-	}
 
-	public void setPayment_dtls(String payment_dtls) {
-		this.payment_dtls = payment_dtls;
-	}
-
-	public String getCharges_dtls() {
-		return charges_dtls;
-	}
-
-	public void setCharges_dtls(String charges_dtls) {
-		this.charges_dtls = charges_dtls;
-	}
 
 	public String getSender_to_receiver_info() {
 		return sender_to_receiver_info;

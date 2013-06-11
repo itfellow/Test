@@ -22,8 +22,8 @@ public class N09Data  {
 	private String batch_time;
 	
 //	5185
-	@Column(name = "TOTAL_LOOPS")
-	private String ttl_Trans_No;
+	@Column(name = "TOTAL_TRANS_REJECTED")
+	private String tot_trans_rejcted;
 	
 //  4115
 	@Column(name = "SUMOFAMT_CURRENT")
@@ -57,7 +57,6 @@ public class N09Data  {
 	@Column(name = "BENEFICIARY_CUSTOEMER_ACCOUNT_NAME")
 	private String beneficiary_customer_account_name;
 	
-
 	//	5565
 	@Column(name = "BENEFICIARY_CUSTOEMER_ADDRESS")
 	private String beneficiary_Cust_Address;
@@ -97,6 +96,7 @@ public class N09Data  {
 	private Long header_id; // suppose to be foreign key
 
 	public N09Data() {}
+
 	public String getTransaction_refId() {
 		return transaction_refId;
 	}
@@ -113,12 +113,12 @@ public class N09Data  {
 		this.batch_time = batch_time;
 	}
 
-	public String getTtl_Trans_No() {
-		return ttl_Trans_No;
+	public String getTot_trans_rejcted() {
+		return tot_trans_rejcted;
 	}
 
-	public void setTtl_Trans_No(String ttl_Trans_No) {
-		this.ttl_Trans_No = ttl_Trans_No;
+	public void setTot_trans_rejcted(String tot_trans_rejcted) {
+		this.tot_trans_rejcted = tot_trans_rejcted;
 	}
 
 	public String getTtl_Amt() {
@@ -179,7 +179,14 @@ public class N09Data  {
 		this.beneficiary_customer_account_no = beneficiary_customer_account_no;
 	}
 
+	public String getBeneficiary_customer_account_name() {
+		return beneficiary_customer_account_name;
+	}
 
+	public void setBeneficiary_customer_account_name(
+			String beneficiary_customer_account_name) {
+		this.beneficiary_customer_account_name = beneficiary_customer_account_name;
+	}
 
 	public String getBeneficiary_Cust_Address() {
 		return beneficiary_Cust_Address;
@@ -259,14 +266,6 @@ public class N09Data  {
 
 	public void setHeader_id(Long header_id) {
 		this.header_id = header_id;
-	}
-	
-	public String getBeneficiary_customer_account_name() {
-		return beneficiary_customer_account_name;
-	}
-	public void setBeneficiary_customer_account_name(
-			String beneficiary_customer_account_name) {
-		this.beneficiary_customer_account_name = beneficiary_customer_account_name;
 	}
 	
 }

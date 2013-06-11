@@ -3,10 +3,10 @@ package com.omni.oesb.omh.notification.TableInsert;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.omni.oesb.fileparser.Util.ParserUtil;
 import com.omni.oesb.fileparser.dao.FileParserDao;
 import com.omni.oesb.notification.TableInsert.vo.CommonAckStatusVo;
 import com.omni.oesb.notification.TableInsert.vo.CommonTransactionDtlsVo;
-import com.omni.oesb.notification.Util.ParserUtil;
 import com.omni.oesb.omh.notification.data.MessageHeader;
 import com.omni.oesb.omh.notification.data.MessageNotificationDtls;
 import com.omni.oesb.omh.notification.data.N06Data;
@@ -33,8 +33,9 @@ public class TableData {
 	protected ParserUtil parserUtil = new ParserUtil();
 	
 	protected final CommonClass commonClass = new CommonClass();
-	
-	//NEFT Insert
+		
+		// check key are mapped from database neft_code_map table
+		//Key AMT & SUM_AMT is hardcoded for String Formation in class:MessageDataFilter Method: filterNeftData() 
 		@SuppressWarnings("static-access")
 		protected Object[] setN06(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 			
@@ -42,69 +43,59 @@ public class TableData {
 			
 			CommonTransactionDtlsVo common = new CommonTransactionDtlsVo();
 			N06Data n06_data = new N06Data();
-			String currencyStr;
-			String currencyAmt [];
 			
-			//amount
-			currencyStr=null;
-			currencyAmt=null;
-			currencyStr = msgBodyMap.get("4038");
-			currencyAmt = parserUtil.parseAmount(currencyStr);
-			if(currencyAmt[1]!=null && currencyAmt[1].length() > 0)
-				n06_data.setAmt(Double.parseDouble(currencyAmt[1]));
+		
+			n06_data.setAmt(Double.parseDouble(msgBodyMap.get("AMT")));
 			
-			//sum of current amt
-			currencyStr=null;
-			currencyAmt=null;
-			currencyStr = msgBodyMap.get("4063");
-			currencyAmt = parserUtil.parseAmount(currencyStr);
-			double amt = 0;
-			if(currencyAmt[1]!=null && currencyAmt[1].length() > 0){
-				amt = Double.parseDouble(currencyAmt[1]);
-				n06_data.setTtl_amt(amt);
-			}
-			n06_data.setBatch_Time(msgBodyMap.get("3535"));
+			double amt = 0.0;
+			amt = Double.parseDouble(msgBodyMap.get("SUM_AMT"));
+			n06_data.setTtl_amt(amt);
+			
+			n06_data.setBatch_Time(msgBodyMap.get("BATCH_TIME"));
 			
 			String benf_branch_ifsc = headerMap.get("RCVR_IFSC");
 			n06_data.setBen_Branch_IFSC(benf_branch_ifsc);
 			
-			String benf_Cust_Acc_adrs = msgBodyMap.get("5565");
+			String benf_Cust_Acc_adrs = msgBodyMap.get("BENF_ADRS");
 			n06_data.setBen_Cust_Acc_Address(benf_Cust_Acc_adrs);
 			
-			String benf_Acc_Name = msgBodyMap.get("6081");
+			String benf_Acc_Name = msgBodyMap.get("BENF_ACNT_NAME");
 			n06_data.setBen_Cust_Acc_Name(benf_Acc_Name);
 			
-			String benf_cust_acc = msgBodyMap.get("6061");
+			String benf_cust_acc = msgBodyMap.get("BENF_ACNT_NO");
 			n06_data.setBen_Cust_Acc_No(benf_cust_acc);
 			
-			String benf_Cust_Acc_typ = msgBodyMap.get("6310");
+			String benf_Cust_Acc_typ = msgBodyMap.get("BENF_ACNT_TYP");
 			n06_data.setBen_Cust_Acc_Type(benf_Cust_Acc_typ);
 			
 			n06_data.setExport_status(null);
 			n06_data.setHeader_id(null);
-			n06_data.setOriginator_Of_Remittance(msgBodyMap.get("7002"));
-			n06_data.setRemittance_date(null);
-			n06_data.setSender_Acc_Name(msgBodyMap.get("6091"));
+			
+			n06_data.setRemittance_date(msgBodyMap.get("REMITTANCE_DATE"));
+			n06_data.setRemittance_info(msgBodyMap.get("SENDR_TO_RCVR_INFO"));
+			
+			n06_data.setOriginator_Of_Remittance(msgBodyMap.get("ORGIN_REMIT"));
+			n06_data.setSender_Acc_Name(msgBodyMap.get("CUST_ACNT_NAME"));
 			String sendingBranchIfsc = headerMap.get("SNDR_IFSC");
 			n06_data.setSending_Branch_IFSC(sendingBranchIfsc);
 			
-			String acnt_no = msgBodyMap.get("6021");
+			String acnt_no = msgBodyMap.get("CUST_ACNT_NO");
 			n06_data.setSending_Cust_Acc_No(acnt_no);
 			
-			n06_data.setSending_Cust_Acc_Type(msgBodyMap.get("6305"));
+			n06_data.setSending_Cust_Acc_Type(msgBodyMap.get("CUST_ACNT_TYP"));
 			
-			String emailMob = msgBodyMap.get("5629");
+			String emailMob = msgBodyMap.get("CUST_MOB_EMAIL");
 			n06_data.setSending_Cust_EmailMob(emailMob);
-			n06_data.setTotal_Transactions(Integer.parseInt(msgBodyMap.get("1106")));
-			n06_data.setTransaction_Loop_RefNo(msgBodyMap.get("2020_1"));
+			n06_data.setTotal_Transactions(Integer.parseInt(msgBodyMap.get("TOT_NUM_LOOP")));
+			n06_data.setTransaction_Loop_RefNo(msgBodyMap.get("TRANS_LOOP_REF_ID"));
 			
-			String transId = msgBodyMap.get("2020");
+			String transId = msgBodyMap.get("TRANS_REF_ID");
 										//setting transId globally so that transactionDtls and messageNotification table
 																	//can get the transId
 			if(transId != null && transId.length() > 0)				
 				n06_data.setTransaction_RefNo(transId);
 			
-			String date = msgBodyMap.get("3380");
+			String date = msgBodyMap.get("VALUE_DATE");
 			if(date != null && date.length() > 0)
 				n06_data.setValueDate(commonClass.convertSQLDateFormat(date));
 			
@@ -121,28 +112,23 @@ public class TableData {
 			return tablePojo;
 		}
 		
-		protected Object[] setN10(HashMap<String,String> msgBodyMap){
+		protected Object[] setN10(Long headerId, HashMap<String,String> msgBodyMap){
 			
 			Object[] obj = new Object[2];
 			CommonAckStatusVo common = new CommonAckStatusVo();
-			String date = null;
-			String time = null;
+		
 			
-			String AmtCredited_Date_Time = msgBodyMap.get("3501");
-			if(AmtCredited_Date_Time !=null && AmtCredited_Date_Time.length() > 0){
-				date = AmtCredited_Date_Time.substring(0,8);
-				time = AmtCredited_Date_Time.substring(7,14);
-			}
+		
 			N10Data n10 = new N10Data();
-			n10.setAmt_credited_date(CommonClass.getSQLDateFormat(date));
-			time = CommonClass.formatTimeString(time);
+			n10.setAmt_credited_date(CommonClass.getSQLDateFormat(msgBodyMap.get("VALUE_DATE")));
+			String time = CommonClass.formatTimeString(msgBodyMap.get("TIME"));
 			n10.setAmt_credited_time(time);
 			n10.setExport_status(null);
-			n10.setHeader_id(null);
-			n10.setOriginator_Ifsc_Code(msgBodyMap.get("5518"));
-			n10.setRelate_ref(msgBodyMap.get("2006"));
-			n10.setTransaction_Loop_RefNo(msgBodyMap.get("2020_1"));
-			n10.setTransaction_refId(msgBodyMap.get("2020"));
+			n10.setHeader_id(headerId);
+			n10.setOriginator_Ifsc_Code(msgBodyMap.get("IFSC_ORG_REMITTANCE"));
+			n10.setRelate_ref(msgBodyMap.get("RELATED_REF"));
+			n10.setTransaction_Loop_RefNo(msgBodyMap.get("TRANS_LOOP_REF_ID"));
+			n10.setTransaction_refId(msgBodyMap.get("TRANS_REF_ID"));
 			
 			common.setStatus("Y");
 			common.setTime(time);
@@ -153,37 +139,35 @@ public class TableData {
 			return obj;
 		}
 		
-		protected Object[] setN09(HashMap<String,String> msgBodyMap){
+		protected Object[] setN09(Long headerId,HashMap<String,String> msgBodyMap){
 			
 			Object[] obj = new Object[2];
 			CommonAckStatusVo common = new CommonAckStatusVo();
 			
 			N09Data n09 = new N09Data();
 			
-			String []currency_amt =parserUtil.parseAmount(msgBodyMap.get("4038"));
-			if(currency_amt[1]!=null)
-				n09.setAmt(Double.parseDouble(currency_amt[1]));
+			n09.setAmt(Double.parseDouble(msgBodyMap.get("AMT")));
 			
-			n09.setBatch_time(msgBodyMap.get("3535"));
-			n09.setBeneficiary_Branch_Ifsc(msgBodyMap.get("5569"));
-			n09.setBeneficiary_Cust_Address(msgBodyMap.get("5565"));
-			n09.setBeneficiary_customer_account_name(msgBodyMap.get("6081"));
-			n09.setBeneficiary_customer_account_no(msgBodyMap.get("6061"));
-			n09.setBeneficiary_customer_account_type(msgBodyMap.get("6310"));
+			n09.setBatch_time(msgBodyMap.get("BATCH_TIME"));
+			n09.setBeneficiary_Branch_Ifsc(msgBodyMap.get("BENF_IFSC"));
+			n09.setBeneficiary_Cust_Address(msgBodyMap.get("BENF_ADRS"));
+			n09.setBeneficiary_customer_account_name(msgBodyMap.get("BENF_ACNT_NAME"));
+			n09.setBeneficiary_customer_account_no(msgBodyMap.get("BENF_ACNT_NO"));
+			n09.setBeneficiary_customer_account_type(msgBodyMap.get("BENF_ACNT_TYP"));
 			n09.setExport_status(null);
-			n09.setHeader_id(null);
-			n09.setOriginal_Value_Date(CommonClass.convertSQLDateFormat(msgBodyMap.get("3381")));
-			n09.setRemittance_date(msgBodyMap.get("3375"));
-			n09.setReason_Code(msgBodyMap.get("6346"));
-			n09.setRejection_Reason(msgBodyMap.get("6366"));
-			n09.setRelated_ref(null);
-			n09.setSender_Branch_Ifsc(msgBodyMap.get("5756"));
-			n09.setSender_To_Rec_Info(msgBodyMap.get("7495"));
-			n09.setTransaction_Loop_No(msgBodyMap.get("2020_1"));
-			n09.setTransaction_refId(msgBodyMap.get("2020"));
-			n09.setTtl_Trans_No(msgBodyMap.get("5185"));
-			n09.setTtl_Amt(msgBodyMap.get("4115"));
-			n09.setValue_Date(CommonClass.convertSQLDateFormat(msgBodyMap.get("3380")));
+			n09.setHeader_id(headerId);
+			n09.setOriginal_Value_Date(CommonClass.convertSQLDateFormat(msgBodyMap.get("ORG_VALUE_DATE")));
+			n09.setRemittance_date(msgBodyMap.get("REMITTANCE_DATE"));
+			n09.setReason_Code(msgBodyMap.get("REASON_CODE"));
+			n09.setRejection_Reason(msgBodyMap.get("REJECT_REASON"));
+			n09.setRelated_ref(msgBodyMap.get("RELATED_REF"));
+			n09.setSender_Branch_Ifsc(msgBodyMap.get("CUST_IFSC"));
+			n09.setSender_To_Rec_Info(msgBodyMap.get("SENDR_TO_RCVR_INFO"));
+			n09.setTransaction_Loop_No(msgBodyMap.get("TRANS_LOOP_REF_ID"));
+			n09.setTransaction_refId(msgBodyMap.get("TRANS_REF_ID"));
+			n09.setTot_trans_rejcted(msgBodyMap.get("TOT_NUM_TRANS"));
+			n09.setTtl_Amt(msgBodyMap.get("TOT_AMT_REJECTED"));
+			n09.setValue_Date(CommonClass.convertSQLDateFormat(msgBodyMap.get("VALUE_DATE")));
 			
 			common.setStatus("N");
 			common.setTime(CommonClass.formatTimeString(null));
@@ -196,81 +180,51 @@ public class TableData {
 		
 		//RTGS Insert
 		@SuppressWarnings("static-access")
-		protected Object[] setR41(String UTR_NO,HashMap<String,String> msgBodyMap){
+		protected Object[] setR41(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 			
 			Object[] obj =  new Object[2];
 			R41Data r41 = new R41Data();
 			CommonTransactionDtlsVo common = new CommonTransactionDtlsVo();
 			
-			String dateAndCurrency = msgBodyMap.get("4488");
 			
-			String date = dateAndCurrency.substring(0,8);
 			
-			if(date != null && date.length() > 0)
-				r41.setValue_date(commonClass.convertSQLDateFormat(date));
 			
-			String currenyStr = dateAndCurrency.substring(8);
+			r41.setValue_date(commonClass.convertSQLDateFormat(msgBodyMap.get("VALUE_DATE")));
 			
-			String currencyAmt [] = parserUtil.parseAmount(currenyStr);
+			r41.setCurrency(msgBodyMap.get("CURRENCY"));
 			
-			if(currencyAmt[0] != null && currencyAmt[0].length()> 0)
-				r41.setCurrency(currencyAmt[0]);
+			double amt = Double.parseDouble(msgBodyMap.get("AMT"));
+			r41.setAmt(amt);
 			
-			Double amt = 0.0;
-			if(currencyAmt[1] != null && currencyAmt[1].length() > 0){
-				amt = Double.parseDouble(currencyAmt[1]);
-				r41.setAmt(amt);
-			}
 			
-			String order_CustDtls[] = parserUtil.parserOrderCustomerForR41(msgBodyMap.get("5500"));
+			r41.setOrder_customer_account_no(msgBodyMap.get("CUST_ACNT_NO"));
+			r41.setOrder_customer_name(msgBodyMap.get("CUST_ACNT_NAME"));
+			r41.setOrder_customer_address(msgBodyMap.get("CUST_ADRS"));
 			
-			r41.setOrder_customer_account_no(order_CustDtls[0].trim());
-			r41.setOrder_customer_name(order_CustDtls[1]);
-			r41.setOrder_customer_address(order_CustDtls[2].trim()+", "+order_CustDtls[3].trim());
+			r41.setOrdering_institution(headerMap.get("SNDR_IFSC"));
 			
-			String senderIfsc = msgBodyMap.get("5517");
-			r41.setOrdering_institution(senderIfsc);
 			
-			String benf_CustDtls[] = parserUtil.parseBenfCustomerForR41(msgBodyMap.get("5561"));
-			
-			if(benf_CustDtls.length == 4){
-				r41.setBeneficiary_account_no(benf_CustDtls[0]);
-				r41.setBeneficiary_customer_name(benf_CustDtls[1]);
+			r41.setBeneficiary_account_no(msgBodyMap.get("BENF_ACNT_NO"));
+			r41.setBeneficiary_customer_name(msgBodyMap.get("BENF_ACNT_NAME"));
 				
-				String benfAdrs = benf_CustDtls[2]+", "+benf_CustDtls[3];
-				
-				if(benfAdrs!=null && benfAdrs.length() > 0){
-					r41.setBeneficiary_customer_address(benfAdrs);
-				}
-			}
-			else if(benf_CustDtls.length == 2){
-				r41.setBeneficiary_account_no(benf_CustDtls[0]);
-				
-				String benfAdrs = benf_CustDtls[1];
-				
-				if(benfAdrs!=null && benfAdrs.length() > 0){
-					r41.setBeneficiary_customer_address(benfAdrs);
-				}
-			}
-			
-			r41.setAccout_with_institution(msgBodyMap.get("6516"));
-			r41.setCharges_dtls(null);
+			r41.setBeneficiary_customer_address(msgBodyMap.get("BENF_ADRS"));
+	
+			r41.setAccout_with_institution(msgBodyMap.get("ACCNT_WITH_INSTITN"));
 			r41.setExport_status(null);
 			r41.setHeader_id(null);
 			r41.setIntermediary(null);
-			r41.setPayment_dtls(null);
-			r41.setReceiver_correspondent(msgBodyMap.get("5526"));
-			r41.setSender_correspondent(msgBodyMap.get("6717"));
-			r41.setSender_to_receiver_info(msgBodyMap.get("7495"));
-			r41.setTransaction_refno(UTR_NO);
+			r41.setReceiver_correspondent(msgBodyMap.get("RCVR_CORRESPONDENT"));
+			r41.setSender_correspondent(msgBodyMap.get("SENDER_CORRESPONDENT"));
+			r41.setSender_to_receiver_info(msgBodyMap.get("SNDR_TO_RCVR_INFO"));
+			r41.setTransaction_refno(headerMap.get("UTR"));
 			
-			common.setAccount_no(order_CustDtls[0]);
+			common.setAccount_no(msgBodyMap.get("CUST_ACNT_NO"));
 			common.setAmt(amt);
-			common.setBenfAcnt(benf_CustDtls[0]);
-			common.setBenfAcntTyp(null);
-			common.setBenfName(benf_CustDtls[1]);
+			common.setBenfAcnt(msgBodyMap.get("BENF_ACNT_NO"));
+//			common.setBenfAcntTyp(null);
+			common.setBenfName(msgBodyMap.get("BENF_ACNT_NAME"));
 			common.setSendingCustEmailMob(null);
-			common.setTransId(UTR_NO);
+			common.setTransId(headerMap.get("UTR"));
 			try{
 				
 				obj[0]=r41;
@@ -282,57 +236,66 @@ public class TableData {
 			return obj;
 		}
 		
-		protected Object[] setR42(String UTR_NO,HashMap<String,String> msgBodyMap){
+		@SuppressWarnings("static-access")
+		protected Object[] setR42(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 			
 			Object[] obj =  new Object[2];
 			@SuppressWarnings("unused")
 			CommonTransactionDtlsVo common = new CommonTransactionDtlsVo();
 			R42Data r42 = new R42Data();
 			
-			r42.setAccout_with_institution(msgBodyMap.get("6516"));
+			r42.setAccout_with_institution(msgBodyMap.get("ACCNT_WITH_INSTITN"));
 			
-			String date_currency_amt = msgBodyMap.get("4488");
-			String date = null;
-			String currency = null;
-			String amt = null;
-			if(date_currency_amt!=null && date_currency_amt.length()>0){
-				date =  date_currency_amt.substring(0,8);
-				String []currency_amt = parserUtil.parseAmount(date_currency_amt.substring(8,date_currency_amt.length()));
-				currency = currency_amt[0];
-				amt = currency_amt[1];
-			}
-			if(amt!=null)
-				r42.setAmt(Double.parseDouble(amt));
+			double amt = Double.parseDouble(msgBodyMap.get("AMT"));
+			r42.setAmt(amt);
 			
-			r42.setBeneficiary_institution(msgBodyMap.get("6521"));
-			r42.setCurrency(currency);
+			r42.setBeneficiary_institution(msgBodyMap.get("ACCNT_WITH_INSTITN"));
+			r42.setCurrency(msgBodyMap.get("CURRENCY"));
 			r42.setExport_status(null);
 			r42.setHeader_id(null);
 			r42.setIntermediary(null);
-			r42.setOrder_institution(msgBodyMap.get("5517"));
-			r42.setReceiver_correspondent(msgBodyMap.get("5526"));
-			r42.setSender_correspondent(msgBodyMap.get("6717"));
-			r42.setSender_to_receiver_info(null);
-			r42.setTransaction_refno(UTR_NO);
-			if(date!=null)
-				r42.setValue_date(CommonClass.convertSQLDateFormat(date));
+			r42.setOrder_institution(headerMap.get("SNDR_IFSC"));
+			r42.setReceiver_correspondent(msgBodyMap.get("RCVR_CORRESPONDENT"));
+			r42.setSender_correspondent(msgBodyMap.get("SENDER_CORRESPONDENT"));
+			r42.setSender_to_receiver_info(msgBodyMap.get("SNDR_TO_RCVR_INFO"));
+			r42.setTransaction_refno(headerMap.get("UTR"));
+			
+			r42.setValue_date(commonClass.convertSQLDateFormat(msgBodyMap.get("VALUE_DATE")));
 			r42.setRelated_ref(null);
+			
+			
+			common.setAccount_no(msgBodyMap.get("CUST_ACNT_NO"));
+			common.setAmt(amt);
+			common.setBenfAcnt(msgBodyMap.get("BENF_ACNT_NO"));
+//			common.setBenfAcntTyp(null);
+			common.setBenfName(msgBodyMap.get("BENF_ACNT_NAME"));
+			common.setSendingCustEmailMob(null);
+			common.setTransId(headerMap.get("UTR"));
+			try{
+				
+				obj[0]=r42;
+				obj[1]=common;
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
 			
 			return obj;
 		}
 		
-		protected Object[] setR09(String UTR_NO , HashMap<String,String> msgBodyMap){
+		protected Object[] setR09(Long headerId,String UTR_NO ,HashMap<String,String> msgBodyMap){
 			
 			Object[] obj = new Object[2];
 			R09Data r09_data = new R09Data();
 			CommonAckStatusVo commonAckStatusVo = new CommonAckStatusVo();
 			
-			r09_data.setReason_code(msgBodyMap.get("6346"));
-			String time = CommonClass.formatTimeString(msgBodyMap.get("3525"));
+			r09_data.setReason_code(msgBodyMap.get("REASON_CODE"));
+			String time = CommonClass.formatTimeString(msgBodyMap.get("SETTLMNT_TIME"));
 			r09_data.setSettelment_time(time);
 			commonAckStatusVo.setTime(time);
-			String ackStat = msgBodyMap.get("6450");
+			String ackStat = msgBodyMap.get("SETTLD_INDICATOR");
 			r09_data.setSettled_indicator(ackStat);
+			r09_data.setHeader_id(headerId);
 			
 			commonAckStatusVo.setStatus(ackStat);		//this status set to update 
 														//TransactionDtls and other related table 
@@ -469,10 +432,9 @@ public class TableData {
 			transactionDtls.setTransaction_status("1");
 			transactionDtls.setTransaction_time(CommonClass.getCurrentTimeStr());
 			
-			transactionDtls.setTransCompleteDate(null);
-			transactionDtls.setTransCompTime(null);
-			transactionDtls.setBeneficiary_avail_bal(null);
-			transactionDtls.setBeneficiary_bank(null);
+		
+//			transactionDtls.setBeneficiary_avail_bal(null);
+//			transactionDtls.setBeneficiary_bank(null);
 			transactionDtls.setMobile_no(null);
 			transactionDtls.setRel_RefId(null);
 			transactionDtls.setMessage_subject(headerMap.get("MSG_TYPE"));

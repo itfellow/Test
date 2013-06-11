@@ -84,9 +84,13 @@ public class N06Data{
 	@Column(name = "BENEFICIARY_CUSTOEMER_ADDRESS")
 	private String ben_Cust_Acc_Address;
 	
-//	7495
+//	3375
 	@Column(name = "REMMITANCE_DATE")
 	private String remittance_date;
+	
+//	7495
+	@Column(name = "REMMITANCE_INFO")
+	private String remittance_info;
 	
 	@Column(name = "EXPORT_STATUS")
 	private String export_status;
@@ -95,6 +99,7 @@ public class N06Data{
 	private Long header_id;
 
 	public N06Data() {}
+
 	public String getTransaction_RefNo() {
 		return transaction_RefNo;
 	}
@@ -247,6 +252,14 @@ public class N06Data{
 		this.remittance_date = remittance_date;
 	}
 
+	public String getRemittance_info() {
+		return remittance_info;
+	}
+
+	public void setRemittance_info(String remittance_info) {
+		this.remittance_info = remittance_info;
+	}
+
 	public String getExport_status() {
 		return export_status;
 	}
@@ -262,7 +275,6 @@ public class N06Data{
 	public void setHeader_id(Long header_id) {
 		this.header_id = header_id;
 	}
-
-
+	
 
 }

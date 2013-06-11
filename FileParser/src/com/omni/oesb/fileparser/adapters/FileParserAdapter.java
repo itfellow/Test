@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ResourceBundle;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.notification.Util.FileReaderUtil;
+import com.omni.oesb.fileparser.Util.FileReaderUtil;
 import com.omni.util.common.PropAccess;
 
 

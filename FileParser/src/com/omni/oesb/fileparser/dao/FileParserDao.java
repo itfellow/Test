@@ -8,7 +8,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import com.omni.component.hibernate.DatabaseUtil;
 import com.omni.component.hibernate.HibernateUtil;
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserConstants;
+import com.omni.oesb.constants.AppConstants;
 
 public final class FileParserDao extends DatabaseUtil {
 	
@@ -45,7 +45,7 @@ public final class FileParserDao extends DatabaseUtil {
 	 */
 	public String insertOesbTransactions(final Object[] tablepojo) {
 		
-		String parserStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parserStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		Session sessionForInsertPojo = null;
 		Transaction trForInsertPojo = null;
@@ -60,11 +60,11 @@ public final class FileParserDao extends DatabaseUtil {
 			}
 			
 			trForInsertPojo.commit();
-			parserStatus = ParserConstants.MSG_PARSE_SUCCESS;
+			parserStatus = AppConstants.MSG_PARSE_SUCCESS;
 			fileLogger.writeLog("info", "Batch Insert Completed Successfully");
 			
 		}catch(ConstraintViolationException e){
-			parserStatus = ParserConstants.MSG_PARSE_ERROR;
+			parserStatus = AppConstants.MSG_PARSE_ERROR;
 			e.printStackTrace();
 			if(trForInsertPojo!=null){
 				trForInsertPojo.rollback();
@@ -74,7 +74,7 @@ public final class FileParserDao extends DatabaseUtil {
 			fileLogger.writeLog("info", "Duplicate Message Detected, Batch Insert Cannot be performed");
 		}
 		catch (HibernateException e) {
-			parserStatus = ParserConstants.MSG_PARSE_ERROR;
+			parserStatus = AppConstants.MSG_PARSE_ERROR;
 			e.printStackTrace();
 			if(trForInsertPojo!=null){
 				trForInsertPojo.rollback();
@@ -102,7 +102,7 @@ public final class FileParserDao extends DatabaseUtil {
 	 */
 	public String updateOesbRecord(final Object[] tablepojo) {
 		
-		String parserStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parserStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		Session sessionForUpdatePojo = null;
 		Transaction trForUpdatePojo = null;
@@ -118,10 +118,10 @@ public final class FileParserDao extends DatabaseUtil {
 			}
 			
 			trForUpdatePojo.commit();
-			parserStatus = ParserConstants.MSG_PARSE_SUCCESS;
+			parserStatus = AppConstants.MSG_PARSE_SUCCESS;
 			fileLogger.writeLog("info", "Batch Update Completed Successfully");
 		} catch (HibernateException e) {
-			parserStatus = ParserConstants.MSG_PARSE_ERROR;
+			parserStatus = AppConstants.MSG_PARSE_ERROR;
 			e.printStackTrace();
 			
 			if (trForUpdatePojo != null){

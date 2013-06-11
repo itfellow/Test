@@ -2,16 +2,21 @@ package com.omni.oesb.omh.notification.TableInsert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import org.hibernate.HibernateException;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.ParserConstants;
+import com.omni.oesb.constants.AppConstants;
 import com.omni.oesb.notification.TableInsert.vo.CommonAckStatusVo;
 import com.omni.oesb.notification.TableInsert.vo.CommonTransactionDtlsVo;
+import com.omni.oesb.omh.notification.data.MessageHeader;
 import com.omni.oesb.omh.notification.data.N06Data;
 import com.omni.oesb.omh.notification.data.N09Data;
 import com.omni.oesb.omh.notification.data.N10Data;
 import com.omni.oesb.omh.notification.data.R09Data;
 import com.omni.oesb.omh.notification.data.R41Data;
+import com.omni.oesb.omh.notification.data.R42Data;
 import com.omni.oesb.omh.notification.data.TransactionDtls;
 import com.omni.util.common.CurrentDate;
 
@@ -25,7 +30,7 @@ public class TableDataInsert extends TableData {
 	 */
 	public  String insertcsvdata(ArrayList<String> CSV_Data[] ){
 
-		String parseStatus=ParserConstants.MSG_PARSE_ERROR;
+		String parseStatus=AppConstants.MSG_PARSE_ERROR;
 		
 		try{
 			
@@ -45,7 +50,7 @@ public class TableDataInsert extends TableData {
 					tablePojo[0] = n10;
 					parseStatus = nfDao.insertOesbTransactions(tablePojo);
 					
-					if(parseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)){
+					if(parseStatus.equals(AppConstants.MSG_PARSE_SUCCESS)){
 						TransactionDtls transDtls = (TransactionDtls) nfDao.getObject(TransactionDtls.class,transId);
 						transDtls.setTransaction_status("2");
 						transDtls.setMessage_type("N10");
@@ -98,11 +103,12 @@ public class TableDataInsert extends TableData {
 	 */
 	public String insertTxtData(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap) throws Exception{
 		
+
 		String msgSubTyp = headerMap.get("MSG_SUBTYPE");
 		
 		fileLogger.writeLog("info", "Insert Operation For "+msgSubTyp+" Started");
 		
-		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parseStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		try{
 			if(headerMap != null && !headerMap.isEmpty() && msgBodyMap != null && !msgBodyMap.isEmpty()){
@@ -123,7 +129,7 @@ public class TableDataInsert extends TableData {
 						}
 					}
 					else if(msgTyp.equalsIgnoreCase("In")){
-						parseStatus = ParserConstants.MSG_PARSE_IGNORED;
+						parseStatus = AppConstants.MSG_PARSE_IGNORED;
 						
 						System.out.println("System has Detected Incoming Message, Cannot Insert to DB");
 						System.out.println("Moving file to ignore...");
@@ -160,8 +166,9 @@ public class TableDataInsert extends TableData {
 	
 	
 	
+	@SuppressWarnings("unused")
 	private String insertNeftAckTypMsg(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
-		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parseStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		Object[]tablePojo = null;
 		String transId = null;
@@ -169,11 +176,20 @@ public class TableDataInsert extends TableData {
 		
 		if(headerMap != null && !headerMap.isEmpty() && msgBodyMap != null && !msgBodyMap.isEmpty()){
 			String msgSubTyp = headerMap.get("MSG_SUBTYPE");
-			transId = msgBodyMap.get("2020");
+			transId = msgBodyMap.get("TRANS_REF_ID");
+			
 			if(msgSubTyp.equalsIgnoreCase("N10")){
 				if(nfDao.checkId(N06Data.class, transId)){
 					if(!nfDao.checkId(N10Data.class, transId)){
-						tablePojo = setN10(msgBodyMap);
+						Long headerId = null;
+						try{
+							headerId = (Long) nfDao.selectRecord("SELECT header_id FROM MessageHeader  " +
+																	"WHERE transaction_refno = '"+transId+"'").get(0);
+						}
+						catch(IndexOutOfBoundsException e){
+							fileLogger.writeLog("warning", "N10: MsgHeaderId Not Found");
+						}
+						tablePojo = setN10(headerId,msgBodyMap);
 					}
 					else{
 						updateFlag=0;
@@ -187,17 +203,28 @@ public class TableDataInsert extends TableData {
 				}
 				else{
 					updateFlag=0;
+				
 					System.out.println("N10: AckMsg Received is not Valid, TransRefId :"+transId);
 					System.out.println("Reason: Details of Ack Msg Not Found in N06 Table");
-					
+						
 					fileLogger.writeLog("warning", "N10: AckMsg Received is not Valid, TransRefId :"+transId);
 					fileLogger.writeLog("warning", "Reason: Details of Ack Msg Not Found in N06 Table");
+					
 				}
 			}
 			else if(msgSubTyp.equalsIgnoreCase("N09")){
 				if(nfDao.checkId(N06Data.class, transId)){
 					if(!nfDao.checkId(N09Data.class, transId)){
-						tablePojo = setN09(msgBodyMap);
+						Long headerId = null;
+						try{
+							headerId = (Long) nfDao.selectRecord("SELECT header_id FROM MessageHeader  " +
+																	"WHERE transaction_refno = '"+transId+"'").get(0);
+						}
+						catch(IndexOutOfBoundsException e){
+							System.out.println();
+							fileLogger.writeLog("warning","N09: MsgHeaderId Not Found");
+						}
+						tablePojo = setN09(headerId,msgBodyMap);
 					}
 					else{
 						updateFlag=0;
@@ -219,10 +246,12 @@ public class TableDataInsert extends TableData {
 			}
 			
 			if(updateFlag==1){
+				
 				Object headerTablePojo = setMessageHeader(headerMap, transId);
 				Object[] tableToInsert = new Object[2];
 				tableToInsert[0] = headerTablePojo;
 				tableToInsert[1] = tablePojo[0];
+				
 				try{
 					if(tableToInsert[0]!=null && tableToInsert[1]!=null && transId != null && transId.trim().length()>0){
 						
@@ -293,7 +322,7 @@ public class TableDataInsert extends TableData {
 	
 	private String insertRtgsAckTypMsg(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 		
-		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parseStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		Object[]tablePojo = new Object[2];				// array r09 and common data table
 		String UTR = null;
@@ -306,7 +335,17 @@ public class TableDataInsert extends TableData {
 			if(msgSubTyp.equalsIgnoreCase("R09")){
 				if(nfDao.checkId(R41Data.class, UTR)){
 					if(!nfDao.checkId(R09Data.class, UTR)){
-						tablePojo = setR09(UTR, msgBodyMap);
+						
+						Long headerId = null;
+						try{
+							headerId = (Long) nfDao.selectRecord("SELECT header_id FROM MessageHeader  " +
+																	"WHERE unique_transaction_reference = '"+UTR+"'").get(0);
+						}
+						catch(IndexOutOfBoundsException e){
+							fileLogger.writeLog("warning", "R09: MsgHeaderId Not Found");
+						}
+						
+						tablePojo = setR09(headerId,UTR, msgBodyMap);
 					}
 					else{
 						updateFlag=0;
@@ -398,9 +437,10 @@ public class TableDataInsert extends TableData {
 	
 	
 	
+	@SuppressWarnings("unused")
 	private String insertForOutGoingMsg(String msgTyp,HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 		
-		String parseStatus = ParserConstants.MSG_PARSE_ERROR;
+		String parseStatus = AppConstants.MSG_PARSE_ERROR;
 		
 		if(headerMap != null && !headerMap.isEmpty() && msgBodyMap != null && !msgBodyMap.isEmpty()){
 			
@@ -411,24 +451,45 @@ public class TableDataInsert extends TableData {
 			Object msgNotifTablePojo = null;
 			int insert_flag = 1;
 			
-			if(msgTyp.equalsIgnoreCase("n06")){
-				if(!nfDao.checkId(N06Data.class, msgBodyMap.get("2020"))){
-					tablePojo = setN06(headerMap,msgBodyMap);
+			String transId = msgBodyMap.get("TRANS_REF_ID");
+			
+			if(msgTyp.equalsIgnoreCase("n06") && transId!=null){
+				if(!nfDao.checkId(N06Data.class, transId)){
+					
+						tablePojo = setN06(headerMap,msgBodyMap);
+					
 				}
 				else{
 					insert_flag = 0;
-					fileLogger.writeLog("warning", "Duplicate N06 Message Detected, N06 MSG with transRefId: "+msgBodyMap.get("2020")+" Already Present in table");
+					
+					if(transId!=null){
+						fileLogger.writeLog("warning", "Duplicate N06 Message Detected, N06 MSG with transRefId: "+transId+" Already Present in table");
+					}
+					else{
+						fileLogger.writeLog("warning", "Cannot Insert N06 TransId Missing");
+					}
 				}
 				
 			}
 			else if(msgTyp.equalsIgnoreCase("r41")){
 				if(!nfDao.checkId(R41Data.class, headerMap.get("UTR"))){
-					tablePojo = setR41(headerMap.get("UTR"),msgBodyMap);	
+					tablePojo = setR41(headerMap,msgBodyMap);	
 					
 				}
 				else{
 					insert_flag = 0;
 					fileLogger.writeLog("warning", "Duplicate R41 Message Detected, R41 MSG with UTR No.: "+headerMap.get("UTR")+" Already Present in table");
+				}
+				
+			}
+			else if(msgTyp.equalsIgnoreCase("r42")){
+				if(!nfDao.checkId(R42Data.class, headerMap.get("UTR"))){
+					tablePojo = setR42(headerMap,msgBodyMap);	
+					
+				}
+				else{
+					insert_flag = 0;
+					fileLogger.writeLog("warning", "Duplicate R42 Message Detected, R42 MSG with UTR No.: "+headerMap.get("UTR")+" Already Present in table");
 				}
 				
 			}

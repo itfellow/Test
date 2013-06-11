@@ -1,4 +1,4 @@
-package com.omni.oesb.notification.Util;
+package com.omni.oesb.fileparser.Util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,8 +14,8 @@ import java.util.ResourceBundle;
 
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.DigitalSignature.SignData;
-import com.omni.oesb.constants.ParserConstants;
-import com.omni.oesb.fileparser.MsgParser;
+import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.fileparser.MessageParser;
 import com.omni.util.common.PropAccess;
 
 public class FileReaderUtil 
@@ -24,7 +24,7 @@ public class FileReaderUtil
 		
 	private static final ResourceBundle bundle = PropAccess.getResourceBundle();
 	
-	private static final MsgParser msgParser = new MsgParser();
+	private static final MessageParser msgParser = new MessageParser();
 	
 	private static  final String destinationFilePath	= bundle.getString("destPath").trim();
 	
@@ -63,7 +63,7 @@ public class FileReaderUtil
 						
 						String fileData = readFileData(sourceFile);
 						
-						String fileParseStatus = ParserConstants.MSG_PARSE_ERROR;
+						String fileParseStatus = AppConstants.MSG_PARSE_ERROR;
 						
 						if(fileData!=null && !(fileData.trim().length() == 0)){
 							if(fileName.substring(fileLength-4, fileLength).equalsIgnoreCase(".txt")){
@@ -77,7 +77,7 @@ public class FileReaderUtil
 								fileParseStatus = result[0];
 								umach_flag =  result[1];
 								
-								if(fileParseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)){
+								if(fileParseStatus.equals(AppConstants.MSG_PARSE_SUCCESS)){
 									if(umach_flag!=null){
 										if(umach_flag.equals("1"))
 											WriteUMACData(sourceFile);			//  this method append UMAC/Digital Signature 
@@ -116,7 +116,7 @@ public class FileReaderUtil
 						}
 						else{
 								
-								fileParseStatus = ParserConstants.MSG_PARSE_IGNORED;
+								fileParseStatus = AppConstants.MSG_PARSE_IGNORED;
 									
 								System.out.println("file ignored because unrecognised file format, FileName : "+fileName);
 									
@@ -124,7 +124,7 @@ public class FileReaderUtil
 							}
 						}
 						else{
-							fileParseStatus = ParserConstants.MSG_PARSE_IGNORED;
+							fileParseStatus = AppConstants.MSG_PARSE_IGNORED;
 							
 							System.out.println("file ignored because File Contain No Data, FileName : "+fileName);
 							
@@ -156,7 +156,7 @@ public class FileReaderUtil
 	private void FileMover(File sourceFile,String fileParseStatus,String fileName){
 		try{
 
-			if(fileParseStatus.equals(ParserConstants.MSG_PARSE_ERROR)){
+			if(fileParseStatus.equals(AppConstants.MSG_PARSE_ERROR)){
 				File crrFile = new File(corruptFilePath);
 				File corruptFile = new File(crrFile.getAbsolutePath()+"\\"+sourceFile.getName());
 				moveFile(sourceFile, corruptFile);
@@ -164,7 +164,7 @@ public class FileReaderUtil
 				
 			} 
 			else 
-			if(fileParseStatus.equals(ParserConstants.MSG_PARSE_IGNORED)) {
+			if(fileParseStatus.equals(AppConstants.MSG_PARSE_IGNORED)) {
 				
 				File ignoredFile = new File(ignoredFilePath);
 				File ignoreFile = new File(ignoredFile.getAbsolutePath()+"\\"+sourceFile.getName());
@@ -173,7 +173,7 @@ public class FileReaderUtil
 				
 			} 
 			else 
-			if(fileParseStatus.equals(ParserConstants.MSG_PARSE_SUCCESS)) {
+			if(fileParseStatus.equals(AppConstants.MSG_PARSE_SUCCESS)) {
 				File destFile = new File(destinationFilePath);
 				File processedFile = new File(destFile.getAbsolutePath()+"\\"+sourceFile.getName());
 				moveFile(sourceFile, processedFile);

@@ -2,7 +2,7 @@ package com.omni.oesb.constants;
 
 import java.util.HashMap;
 
-public interface ParserConstants {
+public interface AppConstants {
 
 	// Message Parse Patterns //
 
