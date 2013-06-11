@@ -8,7 +8,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import com.omni.component.hibernate.DatabaseUtil;
 import com.omni.component.hibernate.HibernateUtil;
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.common.AppConstants;
 
 public final class FileParserDao extends DatabaseUtil {
 	
@@ -23,6 +23,7 @@ public final class FileParserDao extends DatabaseUtil {
 	 */
 	
 	public String checkMsgTyp(String msgSubTyp,String IO_identifier){
+		
 		String msgTyp = null;
 		
 		if(msgSubTyp != null && IO_identifier != null){

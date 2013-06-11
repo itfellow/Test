@@ -7,7 +7,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.common.AppConstants;
 import com.omni.oesb.notification.TableInsert.vo.CommonAckStatusVo;
 import com.omni.oesb.notification.TableInsert.vo.CommonTransactionDtlsVo;
 import com.omni.oesb.omh.notification.data.MessageHeader;

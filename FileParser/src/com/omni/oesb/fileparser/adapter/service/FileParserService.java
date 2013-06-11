@@ -1,11 +1,12 @@
-package com.omni.oesb.fileparser.service;
+package com.omni.oesb.fileparser.adapter.service;
 
 import java.util.Iterator;
 import java.util.List;
 
 import com.omni.component.hibernate.DatabaseUtil;
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.common.AppConstants;
+import com.omni.oesb.common.ServiceMaster;
 import com.omni.oesb.fileparser.adapters.FileParserAdapter;
 
 
@@ -138,27 +139,5 @@ public class FileParserService implements ServiceMaster{
 		
 	}
 	
-	public static void main(String[] args) {
-		
-		DatabaseUtil dbUtil = new DatabaseUtil();
-		
-		List<Object> data = dbUtil.selectRecord("SELECT msg_code,code_value FROM RtgsCodeMap");
-		
-		int codeArrayLen;
-		
-		
-		for (Iterator<Object> iterator = data.iterator(); iterator.hasNext();) {
-			codeArrayLen = 0;
-			Object []value =  (Object[]) iterator.next();
-			String codeStr = value[0].toString();
-			String codeVal = value[1].toString();
-			
-			String []codeArray  = codeStr.split(":");
-			codeArrayLen = codeArray.length;
-			for (int i = 0; i < codeArrayLen; i++) {
-				System.out.println(codeArray[i]+"="+codeVal);
-			}
-		
-		}
-	}
+	
 }

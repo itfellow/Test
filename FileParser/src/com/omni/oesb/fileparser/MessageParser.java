@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.omni.component.logging.FileLogger;
-import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.common.AppConstants;
 import com.omni.oesb.fileparser.Util.ParserUtil;
+import com.omni.oesb.fileparser.transformation.cache.CacheDataManager;
 import com.omni.oesb.omh.notification.TableInsert.TableDataInsert;
 
 
@@ -19,9 +20,7 @@ public class MessageParser{
 	
 	private final MessageDataFilter msgDataFilter = new MessageDataFilter();
 	
-	private HashMap<String,String> msgMap = null;
-	private HashMap<String,String> headerMap = null;
-	HashMap<String,String> msgBodyMap =null;
+	private final CacheDataManager cacheDataManager = CacheDataManager.getCacheDataManager();
 	
 	public String[] parseTxtFile(String message) 
 	{
@@ -48,19 +47,21 @@ public class MessageParser{
 					try
 					{
 
-						msgMap = messageContent.get(i - messageListSize);
+						HashMap<String,String> msgMap = messageContent.get(i - messageListSize);
 						
 						String msgHeader = msgMap.get("MSG_HEADER");
 						
 						String msgBody = msgMap.get("MSG_BODY");
 						
-						headerMap = parserUtil.parseHeader(msgHeader);
+						HashMap<String,String> headerMap = parserUtil.parseHeader(msgHeader);
 						
-						msgBodyMap = parserUtil.parserBody(msgBody);			
+						HashMap<String,String> msgBodyMap = parserUtil.parserBody(msgBody);			
 						
 						msgBodyMap = msgDataFilter.filterMsgBodyData(headerMap.get("MSG_SUBTYPE"),msgBodyMap);
 						
 						parseStatus = dataInsert.insertTxtData(headerMap,msgBodyMap);
+						
+						cacheData(parseStatus, headerMap, msgBodyMap);
 						
 						result[0] =  parseStatus;
 								
@@ -114,7 +115,30 @@ public class MessageParser{
 		return result;
 	}
 	
-	
+	private void cacheData(String parseStatus,HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
+		
+		if(parseStatus.equals(AppConstants.MSG_PARSE_SUCCESS)){
+			
+			if(AppConstants.isTranform == true){
+				
+				HashMap<String, HashMap<String, String>> messageData = new HashMap<String, HashMap<String,String>>();
+				
+				messageData.put("MSG_HEADER", headerMap);
+				
+				messageData.put("MSG_BODY", msgBodyMap);
+				
+				try {
+					cacheDataManager.setCacheDataWithObject(msgBodyMap.get("TRANS_REF_ID"), messageData);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			
+		}
+		
+	}
 	public String parseCsvMessage(String fileData)
 	{
 		String fileParseStatus=AppConstants.MSG_PARSE_ERROR;

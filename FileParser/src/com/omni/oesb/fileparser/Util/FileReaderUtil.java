@@ -14,8 +14,9 @@ import java.util.ResourceBundle;
 
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.DigitalSignature.SignData;
-import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.common.AppConstants;
 import com.omni.oesb.fileparser.MessageParser;
+import com.omni.oesb.fileparser.transformation.cache.CacheDataManager;
 import com.omni.util.common.PropAccess;
 
 public class FileReaderUtil 
@@ -31,7 +32,6 @@ public class FileReaderUtil
 	private static  final String ignoredFilePath 		= bundle.getString("ignoredPath").trim();
 	
 	private static final String corruptFilePath 		= bundle.getString("corruptPath").trim();
-	
 	
 	/*
 	 * This method handle the file processing operations like reading the file from source folder, parsing it

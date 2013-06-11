@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.omni.oesb.constants.AppConstants;
+import com.omni.oesb.common.AppConstants;
 
 public class MessageDataFilter {
 	
