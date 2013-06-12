@@ -1,6 +1,7 @@
 package com.omni.oesb.fileparser.transformer.pac;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -40,7 +41,7 @@ import com.omni.oesb.transformer.xml.pacs009_001_03.SettlementMethod1Code;
 
 public class TransformerPac913 extends TransformerPacHeader implements Transformer{
 	
-	public void convertToNGRTGS(String fileName){
+	public void convertToNGRTGS(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		try {
 			
@@ -216,7 +217,7 @@ public class TransformerPac913 extends TransformerPacHeader implements Transform
 	}
 	
 	public static void main(String[] args) {
-		new TransformerPac913().convertToNGRTGS("asd");
+//		new TransformerPac913().convertToNGRTGS("asd");
 	}
 
 

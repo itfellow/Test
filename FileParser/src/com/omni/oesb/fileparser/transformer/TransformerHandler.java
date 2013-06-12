@@ -1,7 +1,6 @@
 package com.omni.oesb.fileparser.transformer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import com.omni.component.hibernate.DatabaseUtil;
@@ -13,7 +12,7 @@ public class TransformerHandler {
 	
 	private static final HashMap<String, String> xmlPacMap = new HashMap<String, String>();
 	
-	static{
+/*	static{
 		
 		List<Object> data = dbUtil.selectRecord("SELECT pac_name,tranformer_class_name FROM XmlTransformerMap");
 
@@ -27,35 +26,68 @@ public class TransformerHandler {
 	
 		System.out.println("xml pac Map Fetched");
 		
-	}
+	}*/
 	
-	public void handler(String pacName){
+	@SuppressWarnings("unused")
+	public void tranformData(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		try {
 			
-			Transformer tranformer= (Transformer) Class.forName(xmlPacMap.get(pacName)).newInstance();
+			String msgTyp = headerMap.get("MSG_SUBTYPE");
 			
-			tranformer.convertToNGRTGS("ds");
+			
+			if(msgTyp!=null){
+				
+				String pacName=fetchPacName(msgTyp);
+				
+				if(pacName!=null){
+					
+					Transformer tranformer= (Transformer) Class.forName(xmlPacMap.get(pacName)).newInstance();
+					
+					tranformer.convertToNGRTGS(headerMap,msgBodyMap);
+					
+				}
+				else{
+					throw new Exception("pacName cannot be Null");
+				}
+				
+			}
+			else{
+				throw new Exception("msgTypId Cannot be NULL");
+			}
+			
 		
-		} catch (InstantiationException e) {
-
+		} catch (Exception e) {
+			
 			e.printStackTrace();
-		
-		} catch (IllegalAccessException e) {
-
-			e.printStackTrace();
-		
-		} catch (ClassNotFoundException e) {
-
-			e.printStackTrace();
+			System.exit(0);
+			
+			
 		
 		}
 		
 	}
 	
+	private String fetchPacName(String msgSubTyp){
+		
+		if(msgSubTyp!=null){
+			
+			List<Object> pacName = dbUtil.selectRecord(	"SELECT xf.pac_name FROM XmlTransformerMap xf, MessageTypeMst msg " +
+														"WHERE msg.xml_id = xf.id AND msg.msg_typ_flag = 'Out' AND msg.series = '"+msgSubTyp+"'");
+			
+			if(pacName != null && !pacName.isEmpty()){
+				return pacName.get(0).toString();
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	
 	public static void main(String []ar){
-
-
+		
+		System.out.println(new TransformerHandler().fetchPacName("r40"));;
 	
 	}
 	

@@ -5,10 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
+import com.omni.oesb.data.XmlTransformerMap;
 
 @Entity
 @Table(name="MESSAGE_TYPE_MST")
@@ -32,6 +36,9 @@ public class MessageTypeMst {
 	@Column(name = "SERIES")
 	private String series;
 	
+	@ManyToOne
+	@JoinColumn(name = "xml_id")
+	private XmlTransformerMap xml_id;
 
 	public MessageTypeMst() {}
 
@@ -85,7 +92,13 @@ public class MessageTypeMst {
 		this.series = series;
 	}
 	
-	
+	public XmlTransformerMap getXml_id() {
+		return xml_id;
+	}
+
+	public void setXml_id(XmlTransformerMap xml_id) {
+		this.xml_id = xml_id;
+	}
 
 
 

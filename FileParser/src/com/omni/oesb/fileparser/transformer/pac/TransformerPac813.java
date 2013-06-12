@@ -2,6 +2,7 @@ package com.omni.oesb.fileparser.transformer.pac;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -41,14 +42,14 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
 
 public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
 	
-	public void convertToNGRTGS(String fileName){
+	public void convertToNGRTGS(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		String []mergeFile = new String[2];
 		
 		mergeFile[0] = CreadAppHeader("FIToFICustomerCredit");
 		mergeFile[1] = createDocumentBody("FIToFICustomerCredit");
 		
-		mergePac(fileName, mergeFile);
+//		mergePac(fileName, mergeFile);
 		
 	}
 	

@@ -16,7 +16,6 @@ import com.omni.component.logging.FileLogger;
 import com.omni.oesb.DigitalSignature.SignData;
 import com.omni.oesb.common.AppConstants;
 import com.omni.oesb.fileparser.MessageParser;
-import com.omni.oesb.fileparser.transformation.cache.CacheDataManager;
 import com.omni.util.common.PropAccess;
 
 public class FileReaderUtil 
