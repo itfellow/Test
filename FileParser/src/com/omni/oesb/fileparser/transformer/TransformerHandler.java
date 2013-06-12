@@ -12,23 +12,6 @@ public class TransformerHandler {
 	
 	private static final HashMap<String, String> xmlPacMap = new HashMap<String, String>();
 	
-/*	static{
-		
-		List<Object> data = dbUtil.selectRecord("SELECT pac_name,tranformer_class_name FROM XmlTransformerMap");
-
-		for (Iterator<Object> iterator = data.iterator(); iterator.hasNext();) {
-		
-			Object[] str =  (Object[]) iterator.next();
-			
-			xmlPacMap.put(str[0].toString(), str[1].toString());
-			
-		}
-	
-		System.out.println("xml pac Map Fetched");
-		
-	}*/
-	
-	@SuppressWarnings("unused")
 	public void tranformData(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		try {
