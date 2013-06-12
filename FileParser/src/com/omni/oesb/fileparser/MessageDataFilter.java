@@ -157,7 +157,6 @@ public class MessageDataFilter {
 		
 		if(order_CustDtls!=null && order_CustDtls.length>0){
 			//Split acount no , acount name, adrs from order_customer
-			dataFilter.remove("ORDRNG_CUST");
 			
 			//customer account no
 			dataFilter.put("CUST_ACNT_NO", order_CustDtls[0].replace("/", "").trim());
@@ -174,8 +173,6 @@ public class MessageDataFilter {
 		if(benf_CustDtls!=null){
 			
 			if(benf_CustDtls.length > 4){
-				
-				dataFilter.remove("BENF_CUST");
 				
 				dataFilter.put("BENF_ACNT_NO", benf_CustDtls[0]);
 				
@@ -194,8 +191,6 @@ public class MessageDataFilter {
 				}
 			}
 			else if(benf_CustDtls.length > 2){
-				
-				dataFilter.remove("BENF_CUST");
 				
 				dataFilter.put("BENF_ACNT_NO", benf_CustDtls[0]);
 				

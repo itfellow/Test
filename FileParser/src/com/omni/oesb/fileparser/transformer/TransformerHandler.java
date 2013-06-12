@@ -8,8 +8,9 @@ import com.omni.oesb.fileparser.transformer.pac.Transformer;
 
 public class TransformerHandler {
 	
-	private static DatabaseUtil dbUtil = new DatabaseUtil();
-		
+	private final static DatabaseUtil dbUtil = new DatabaseUtil();
+	
+	
 	public void tranformData(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		try {
@@ -24,7 +25,8 @@ public class TransformerHandler {
 					
 					Transformer tranformer= (Transformer) Class.forName(pacName).newInstance();
 					
-					tranformer.convertToNGRTGS(headerMap,msgBodyMap);
+							
+					tranformer.convertToNGRTGS(headerMap, msgBodyMap);
 					
 				}
 				else{
@@ -56,7 +58,9 @@ public class TransformerHandler {
 														"WHERE msg.xml_id = xf.id AND msg.msg_typ_flag = 'Out' AND msg.series = '"+msgSubTyp+"'");
 			
 			if(pacName != null && !pacName.isEmpty()){
+				
 				return pacName.get(0).toString();
+				
 			}
 			
 		}

@@ -39,6 +39,7 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.RemittanceInformation7;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.ServiceLevel8Choice;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementInstruction1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
+import com.omni.util.common.CommonClass;
 
 public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
 	
@@ -49,6 +50,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		String BusinessServiceRule = "FIToFICustomerCredit";
 		
 		mergeFile[0] = CreadAppHeader(BusinessServiceRule, headerMap);
+		
 		mergeFile[1] = createDocumentBody(BusinessServiceRule, msgBodyMap);
 		
 		String fileName = headerMap.get("MSG_SUBTYPE")+"_"+msgBodyMap.get("TRANS_REF_ID");
@@ -72,13 +74,13 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			// greogrian calender example:- 2013-10-18T09:00:00
 			// set Date and time here
-			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime("20131018","1000"));
-			grpHdr.setNbOfTxs("1");							// number given in String
+			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime(msgBodyMap.get("VALUE_DATE"), CommonClass.getCurrentTimeStr()));
+			grpHdr.setNbOfTxs("1");					// number given in String
 			
 			ActiveCurrencyAndAmount actvCurrencyAndAmt = new ActiveCurrencyAndAmount();
 			
 			// Set Currency Type for tot amt
-			actvCurrencyAndAmt.setCcy("INR");
+			actvCurrencyAndAmt.setCcy(msgBodyMap.get("CURRENCY"));
 			
 			// Set total amt here
 			actvCurrencyAndAmt.setValue(new BigDecimal(5000000));
@@ -171,8 +173,9 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			// set currency for amt
 			actvCurrencyAndAmt.setCcy("INR");
+			
 			// set amt here
-			actvCurrencyAndAmt.setValue(new BigDecimal(5000000));
+			actvCurrencyAndAmt.setValue(new BigDecimal(getAmount(msgBodyMap.get("CURRENCY"))));
 			
 			cdtTrfTxInf.setIntrBkSttlmAmt(actvCurrencyAndAmt);
 			
@@ -316,6 +319,18 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 	
 	
 	
+	// utility methods
+	private int getAmount(String amtStr){
+		
+		int amt = 0;
+		if(amtStr!=null){
+			amt = Integer.parseInt(amtStr);
+		}
+		
+		return amt;
+	}
+	
+	
 	public static void main(String ar[]){
 // 		new TransformerPac813().createPac813();
 		String []as = new String[2];
@@ -324,5 +339,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		
 		new TransformerPac813().mergePac("yeahh",as);
 	}
+
+
 
 }

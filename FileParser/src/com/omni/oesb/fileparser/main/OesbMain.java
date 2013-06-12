@@ -5,6 +5,7 @@ import com.omni.oesb.fileparser.adapter.service.FileParserService;
 
 public class OesbMain {
 	public static void main(String ar[]){
+		
 		ServiceMaster fileParserService = new FileParserService();
 		
 		fileParserService.startService();
