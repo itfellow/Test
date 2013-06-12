@@ -172,10 +172,10 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			cdtTrfTxInf.setPmtTpInf(paymentTypeInfo);
 			
 			// set currency for amt
-			actvCurrencyAndAmt.setCcy("INR");
+			actvCurrencyAndAmt.setCcy(msgBodyMap.get("CURRENCY"));
 			
 			// set amt here
-			actvCurrencyAndAmt.setValue(new BigDecimal(getAmount(msgBodyMap.get("CURRENCY"))));
+			actvCurrencyAndAmt.setValue(new BigDecimal(getAmount("AMT")));
 			
 			cdtTrfTxInf.setIntrBkSttlmAmt(actvCurrencyAndAmt);
 			
