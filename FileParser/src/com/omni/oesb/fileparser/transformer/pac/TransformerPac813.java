@@ -46,14 +46,18 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		
 		String []mergeFile = new String[2];
 		
-		mergeFile[0] = CreadAppHeader("FIToFICustomerCredit");
-		mergeFile[1] = createDocumentBody("FIToFICustomerCredit");
+		String BusinessServiceRule = "FIToFICustomerCredit";
 		
-//		mergePac(fileName, mergeFile);
+		mergeFile[0] = CreadAppHeader(BusinessServiceRule, headerMap);
+		mergeFile[1] = createDocumentBody(BusinessServiceRule, msgBodyMap);
+		
+		String fileName = headerMap.get("MSG_SUBTYPE")+"_"+msgBodyMap.get("TRANS_REF_ID");
+		
+		mergePac(fileName, mergeFile);
 		
 	}
 	
-	private String createDocumentBody(String BusinessServiceRule){
+	private String createDocumentBody(String BusinessServiceRule, HashMap<String, String>  msgBodyMap){
 		
 		try{
 			

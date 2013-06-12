@@ -41,6 +41,6 @@ public final class AppConstants {
 	
 	// Transformation Flag
 	
-	public static boolean isTranform = false;
+	public static boolean isTranform = true;
 	
 }

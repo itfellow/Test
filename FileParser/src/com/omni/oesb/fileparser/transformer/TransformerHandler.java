@@ -9,15 +9,12 @@ import com.omni.oesb.fileparser.transformer.pac.Transformer;
 public class TransformerHandler {
 	
 	private static DatabaseUtil dbUtil = new DatabaseUtil();
-	
-	private static final HashMap<String, String> xmlPacMap = new HashMap<String, String>();
-	
+		
 	public void tranformData(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		try {
 			
 			String msgTyp = headerMap.get("MSG_SUBTYPE");
-			
 			
 			if(msgTyp!=null){
 				
@@ -25,7 +22,7 @@ public class TransformerHandler {
 				
 				if(pacName!=null){
 					
-					Transformer tranformer= (Transformer) Class.forName(xmlPacMap.get(pacName)).newInstance();
+					Transformer tranformer= (Transformer) Class.forName(pacName).newInstance();
 					
 					tranformer.convertToNGRTGS(headerMap,msgBodyMap);
 					
@@ -55,7 +52,7 @@ public class TransformerHandler {
 		
 		if(msgSubTyp!=null){
 			
-			List<Object> pacName = dbUtil.selectRecord(	"SELECT xf.pac_name FROM XmlTransformerMap xf, MessageTypeMst msg " +
+			List<Object> pacName = dbUtil.selectRecord(	"SELECT xf.tranformer_class_name FROM XmlTransformerMap xf, MessageTypeMst msg " +
 														"WHERE msg.xml_id = xf.id AND msg.msg_typ_flag = 'Out' AND msg.series = '"+msgSubTyp+"'");
 			
 			if(pacName != null && !pacName.isEmpty()){

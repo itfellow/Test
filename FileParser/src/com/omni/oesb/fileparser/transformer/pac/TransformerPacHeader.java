@@ -3,6 +3,7 @@ package com.omni.oesb.fileparser.transformer.pac;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
@@ -35,7 +36,7 @@ public abstract class TransformerPacHeader {
 	
 	String xmlTransformPath = bundle.getString("xmlTransformPath").trim();
 		
-	protected String CreadAppHeader(String BusinessServiceRule){
+	protected String CreadAppHeader(String BusinessServiceRule,HashMap<String, String> headerMap){
 		
 		try{
 			
@@ -52,7 +53,7 @@ public abstract class TransformerPacHeader {
 			ClearingSystemMemberIdentification2 clrSysMembrId = new ClearingSystemMemberIdentification2();
 			
 			// set sender ifsc here 
-			clrSysMembrId.setMmbId("SBIC0004080");
+			clrSysMembrId.setMmbId(headerMap.get("SNDR_IFSC"));
 			
 			fiInstId.setClrSysMmbId(clrSysMembrId);
 			
@@ -66,9 +67,9 @@ public abstract class TransformerPacHeader {
 			fIId = new BranchAndFinancialInstitutionIdentification5();
 			fiInstId = new FinancialInstitutionIdentification8();
 			clrSysMembrId = new ClearingSystemMemberIdentification2();
-			
+
 			// set receiver ifsc here
-			clrSysMembrId.setMmbId("ALLA0211214");
+			clrSysMembrId.setMmbId(headerMap.get("RCVR_IFSC"));
 			
 			fiInstId.setClrSysMmbId(clrSysMembrId);
 			
@@ -87,7 +88,9 @@ public abstract class TransformerPacHeader {
 			// set business service Rule
 			appHeadr.setBizSvc(BusinessServiceRule);
 			
-			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime("20131018", "0900"));
+			String date = headerMap.get("ORGIN_DT");
+			String time = headerMap.get("ORGIN_TIME");
+			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime(date, time));
 			
 			appHeadr.setCpyDplct(CopyDuplicate1Code.CODU);
 			
@@ -106,7 +109,7 @@ public abstract class TransformerPacHeader {
 	        Marshaller marshaller = context.createMarshaller();
 	        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 	   
-	        marshaller.marshal(element,System.out);
+//	        marshaller.marshal(element,System.out);
 			
 	        
 	        File path = new File(pathStr);
