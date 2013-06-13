@@ -41,7 +41,11 @@ import com.omni.oesb.transformer.xml.pacs009_001_03.SettlementMethod1Code;
 
 public class TransformerPac913 extends TransformerPacHeader implements Transformer{
 	
-	public void convertToNGRTGS(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
+	public void convertToNGRTGS(String pacName,
+								String businessRule,
+								String transId, 
+								HashMap<String, String> headerMap, 
+								HashMap<String, String>  msgBodyMap){
 		
 		try {
 			

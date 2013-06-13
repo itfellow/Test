@@ -4,6 +4,9 @@ import java.util.HashMap;
 
 public interface Transformer {
 
-	void convertToNGRTGS(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap);
+	void convertToNGRTGS(	String pacName,
+							String businessRule,
+							String transId, HashMap<String, String> headerMap, 
+							HashMap<String, String>  msgBodyMap);
 	
 }

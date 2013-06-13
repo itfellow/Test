@@ -36,7 +36,7 @@ public abstract class TransformerPacHeader {
 	
 	String xmlTransformPath = bundle.getString("xmlTransformPath").trim();
 		
-	protected String CreadAppHeader(String BusinessServiceRule,HashMap<String, String> headerMap){
+	protected String CreadAppHeader(String pacName,String BusinessServiceRule, String transId, HashMap<String, String> headerMap){
 		
 		try{
 			
@@ -80,10 +80,9 @@ public abstract class TransformerPacHeader {
 			appHeadr.setTo(partyChoice);
 			
 			// set business Message Id (accorndng to XML given by kumari transactionID)
-			String transId = "SBIC201310181000000301";
 			appHeadr.setBizMsgIdr(transId);
 			
-			appHeadr.setMsgDefIdr("pacs.008.001.03");
+			appHeadr.setMsgDefIdr(pacName);
 			
 			// set business service Rule
 			appHeadr.setBizSvc(BusinessServiceRule);
@@ -92,7 +91,15 @@ public abstract class TransformerPacHeader {
 			String time = headerMap.get("ORGIN_TIME");
 			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime(date, time));
 			
-			appHeadr.setCpyDplct(CopyDuplicate1Code.CODU);
+			// set possible duplicate emission flag here
+			if(headerMap.get("POSBL_DUP_EMSN_FLAG").equals("1")){
+				appHeadr.setCpyDplct(CopyDuplicate1Code.DUPL);
+			}
+			else{
+				appHeadr.setCpyDplct(CopyDuplicate1Code.CODU);
+			}
+				
+			
 			
 			SignatureEnvelope signEnvlop = new SignatureEnvelope();
 			

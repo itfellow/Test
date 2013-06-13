@@ -59,7 +59,8 @@ public class MessageParser{
 						
 						msgBodyMap = msgDataFilter.filterMsgBodyData(headerMap.get("MSG_SUBTYPE"),msgBodyMap);
 						
-						parseStatus = dataInsert.insertTxtData(headerMap,msgBodyMap);
+//						parseStatus = dataInsert.insertTxtData(headerMap,msgBodyMap);
+						parseStatus = AppConstants.MSG_PARSE_SUCCESS;
 						
 						tranformTxtToXml(parseStatus, headerMap, msgBodyMap);
 						

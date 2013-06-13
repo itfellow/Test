@@ -1,9 +1,11 @@
 package com.omni.oesb.fileparser.transformer;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.omni.component.hibernate.DatabaseUtil;
+import com.omni.oesb.data.XmlTransformerMap;
 import com.omni.oesb.fileparser.transformer.pac.Transformer;
 
 public class TransformerHandler {
@@ -19,15 +21,26 @@ public class TransformerHandler {
 			
 			if(msgTyp!=null){
 				
-				String pacName=fetchPacName(msgTyp);
+				String orginDate = headerMap.get("ORGIN_DT").replace("/", "");
 				
-				if(pacName!=null){
+				headerMap.put("ORGIN_DT", orginDate);
+				
+				String[] pacDtls=fetchPacName(msgTyp);
+				
+				if(pacDtls!=null && pacDtls.length == 3 ){
 					
-					Transformer tranformer= (Transformer) Class.forName(pacName).newInstance();
+					Transformer tranformer= (Transformer) Class.forName(pacDtls[1]).newInstance();
 					
-							
-					tranformer.convertToNGRTGS(headerMap, msgBodyMap);
+					String transId = generateNgrtgsTransId(msgTyp.charAt(0),headerMap);
 					
+					if(transId!=null){
+						
+						tranformer.convertToNGRTGS(pacDtls[0], pacDtls[2], transId, headerMap, msgBodyMap);
+						
+					}
+					else{
+						throw new Exception("NGRtgs TransId generated is NULL");
+					}
 				}
 				else{
 					throw new Exception("pacName cannot be Null");
@@ -44,22 +57,30 @@ public class TransformerHandler {
 			e.printStackTrace();
 			System.exit(0);
 			
-			
-		
 		}
 		
 	}
 	
-	private String fetchPacName(String msgSubTyp){
+	private String[] fetchPacName(String msgSubTyp){
 		
 		if(msgSubTyp!=null){
 			
-			List<Object> pacName = dbUtil.selectRecord(	"SELECT xf.tranformer_class_name FROM XmlTransformerMap xf, MessageTypeMst msg " +
+			List<Object> pacName = dbUtil.selectRecord(	"SELECT xf.pac_name, xf.tranformer_class_name, xf.business_service_rule FROM XmlTransformerMap xf, MessageTypeMst msg " +
 														"WHERE msg.xml_id = xf.id AND msg.msg_typ_flag = 'Out' AND msg.series = '"+msgSubTyp+"'");
 			
 			if(pacName != null && !pacName.isEmpty()){
 				
-				return pacName.get(0).toString();
+				String[] pacDtls = new String[3];
+				for (Iterator<Object> iterator = pacName.iterator(); iterator.hasNext();) {
+					
+					Object []object =  (Object[]) iterator.next();
+					
+					pacDtls[0] = object[0].toString();
+					pacDtls[1] = object[1].toString();
+					pacDtls[2] = object[2].toString();
+					
+				}
+				return pacDtls;
 				
 			}
 			
@@ -68,11 +89,54 @@ public class TransformerHandler {
 		return null;
 	}
 	
-	
-	public static void main(String []ar){
-		
-		System.out.println(new TransformerHandler().fetchPacName("r40"));;
-	
+	private String generateNgrtgsTransId(char msgTyp,HashMap<String, String> headerMap){
+			
+			
+		try {
+			
+			
+			if(msgTyp == 'R' || msgTyp == 'r'){
+				
+				String senderIfsc = headerMap.get("SNDR_IFSC");
+				
+				senderIfsc = senderIfsc.substring(0, 4);
+				
+				String creationDate = headerMap.get("ORGIN_DT");
+				
+				char channel = '1';
+				
+				String utr = headerMap.get("UTR");
+				
+				utr = utr.substring(10);
+				
+				String transId = senderIfsc + creationDate + channel + utr;
+				
+				System.out.println("New NGRTGS TransId Generated: "+transId);
+				
+				return transId;
+			}
+			else if(msgTyp == 'N' || msgTyp == 'n'){
+				
+				
+			}
+			else{
+				
+				throw new Exception("msgTyp Not Recognised");
+			
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
+	public static void main(String[] args) {
+		HashMap<String , String> map = new HashMap<String, String>();
+		map.put("ORGIN_DT","2013/05/08".replace("/", ""));
+		map.put("SNDR_IFSC","VSBL0000012");
+		map.put("UTR", "VSBLH13128000024");
+		new TransformerHandler().generateNgrtgsTransId('R', map);
+	}
+
 }

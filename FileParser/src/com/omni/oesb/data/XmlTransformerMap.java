@@ -24,7 +24,9 @@ public class XmlTransformerMap {
 	@Column(name = "TRANSFORMER_CLASS_NAME")
 	private String tranformer_class_name = null;
 	
-	
+	@Column(name = "BUSINESS_SERVICE_RULE")
+	private String business_service_rule = null;
+
 	public XmlTransformerMap(){}
 	
 	@Fetch(FetchMode.SELECT)
@@ -41,18 +43,26 @@ public class XmlTransformerMap {
 		return pac_name;
 	}
 	
-	@Fetch(FetchMode.SELECT)
+	
 	public void setPac_name(String pac_name) {
 		this.pac_name = pac_name;
 	}
-
+	
+	@Fetch(FetchMode.SELECT)
 	public String getTranformer_class_name() {
 		return tranformer_class_name;
 	}
 	
-	@Fetch(FetchMode.SELECT)
 	public void setTranformer_class_name(String tranformer_class_name) {
 		this.tranformer_class_name = tranformer_class_name;
 	}
+	
+	@Fetch(FetchMode.SELECT)
+	public String getBusiness_service_rule() {
+		return business_service_rule;
+	}
 
+	public void setBusiness_service_rule(String business_service_rule) {
+		this.business_service_rule = business_service_rule;
+	}
 }

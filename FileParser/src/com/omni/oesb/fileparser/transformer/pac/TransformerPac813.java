@@ -43,15 +43,16 @@ import com.omni.util.common.CommonClass;
 
 public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
 	
-	public void convertToNGRTGS(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
+	public void convertToNGRTGS(String pacName,
+								String businessRule,
+								String transId, HashMap<String, String> headerMap, 
+												HashMap<String, String>  msgBodyMap){
 		
 		String []mergeFile = new String[2];
 		
-		String BusinessServiceRule = "FIToFICustomerCredit";
+		mergeFile[0] = CreadAppHeader(pacName, businessRule, transId, headerMap);
 		
-		mergeFile[0] = CreadAppHeader(BusinessServiceRule, headerMap);
-		
-		mergeFile[1] = createDocumentBody(BusinessServiceRule, msgBodyMap);
+		mergeFile[1] = createDocumentBody(businessRule, transId, msgBodyMap);
 		
 		String fileName = headerMap.get("MSG_SUBTYPE")+"_"+msgBodyMap.get("TRANS_REF_ID");
 		
@@ -59,7 +60,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		
 	}
 	
-	private String createDocumentBody(String BusinessServiceRule, HashMap<String, String>  msgBodyMap){
+	private String createDocumentBody(String BusinessServiceRule, String transId, HashMap<String, String>  msgBodyMap){
 		
 		try{
 			
@@ -70,7 +71,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			GroupHeader49 grpHdr = factoryPac008.createGroupHeader49();
 			
 			//Set transId here
-			grpHdr.setMsgId("SBIC201310181000000301");						
+			grpHdr.setMsgId(transId);						
 			
 			// greogrian calender example:- 2013-10-18T09:00:00
 			// set Date and time here
@@ -133,10 +134,11 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			//	set transRef loop no
 			pmtId.setInstrId("TRN0000000000001");
+			
 			// set utr no
 			pmtId.setEndToEndId("/XUTR/TESTH11000000301");
+			
 			// set tranaction Id
-			String transId =  "SBIC20131018R100000301";
 			pmtId.setTxId(transId);
 			
 			cdtTrfTxInf.setPmtId(pmtId);
@@ -147,6 +149,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			ServiceLevel8Choice SvcLvl = new ServiceLevel8Choice();
 			
+			// indicator of urgency, Default value high
 			paymentTypeInfo.setInstrPrty(Priority2Code.HIGH);
 			
 			//set prority here
@@ -179,12 +182,14 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			cdtTrfTxInf.setIntrBkSttlmAmt(actvCurrencyAndAmt);
 			
+			//	WARNING HARD-CODED Debit enum used here for making tag <ChrgBr>DEBT</ChrgBr>
 			// set ChargeBearer Codes used are: CRED/DEBT/SHAR/SLEV
 			cdtTrfTxInf.setChrgBr(ChargeBearerType1Code.DEBT);
 			
 			PartyIdentification43 partyId = new PartyIdentification43();
+			
 			// set Address Line 1 here
-			partyId.setNm("Address Line 2");
+			partyId.setNm("Address Line 1");
 	
 			PostalAddress6 postalAdrs = new PostalAddress6();
 			
@@ -330,16 +335,5 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		return amt;
 	}
 	
-	
-	public static void main(String ar[]){
-// 		new TransformerPac813().createPac813();
-		String []as = new String[2];
-		as[0] = "C:\\omh\\parserConf\\File Adapter\\xmlCache\\AppHeadSBIC201310181000000301.xml";
-		as[1] = "C:\\omh\\parserConf\\File Adapter\\xmlCache\\DocBodySBIC20131018R100000301.xml";
-		
-		new TransformerPac813().mergePac("yeahh",as);
-	}
-
-
 
 }

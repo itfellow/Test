@@ -32,6 +32,8 @@ public final class TransformerUtil {
 				//Set Creation Date here
 				GregorianCalendar gregorianDateTime = new GregorianCalendar(year,month,day);		
 				
+				time = time.replace(":", "");
+				
 				String hrsStr = time.substring(0, 2);
 				
 				if(hrsStr.startsWith("0")){
