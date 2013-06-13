@@ -21,26 +21,15 @@ public class TransformerHandler {
 			
 			if(msgTyp!=null){
 				
-				String orginDate = headerMap.get("ORGIN_DT").replace("/", "");
-				
-				headerMap.put("ORGIN_DT", orginDate);
-				
 				String[] pacDtls=fetchPacName(msgTyp);
 				
 				if(pacDtls!=null && pacDtls.length == 3 ){
 					
 					Transformer tranformer= (Transformer) Class.forName(pacDtls[1]).newInstance();
 					
-					String transId = generateNgrtgsTransId(msgTyp.charAt(0),headerMap);
+					tranformer.convertToNGRTGS(pacDtls[0], pacDtls[2], headerMap, msgBodyMap);
+						
 					
-					if(transId!=null){
-						
-						tranformer.convertToNGRTGS(pacDtls[0], pacDtls[2], transId, headerMap, msgBodyMap);
-						
-					}
-					else{
-						throw new Exception("NGRtgs TransId generated is NULL");
-					}
 				}
 				else{
 					throw new Exception("pacName cannot be Null");
@@ -89,54 +78,14 @@ public class TransformerHandler {
 		return null;
 	}
 	
-	private String generateNgrtgsTransId(char msgTyp,HashMap<String, String> headerMap){
-			
-			
-		try {
-			
-			
-			if(msgTyp == 'R' || msgTyp == 'r'){
-				
-				String senderIfsc = headerMap.get("SNDR_IFSC");
-				
-				senderIfsc = senderIfsc.substring(0, 4);
-				
-				String creationDate = headerMap.get("ORGIN_DT");
-				
-				char channel = '1';
-				
-				String utr = headerMap.get("UTR");
-				
-				utr = utr.substring(10);
-				
-				String transId = senderIfsc + creationDate + channel + utr;
-				
-				System.out.println("New NGRTGS TransId Generated: "+transId);
-				
-				return transId;
-			}
-			else if(msgTyp == 'N' || msgTyp == 'n'){
-				
-				
-			}
-			else{
-				
-				throw new Exception("msgTyp Not Recognised");
-			
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 	
 	public static void main(String[] args) {
 		HashMap<String , String> map = new HashMap<String, String>();
 		map.put("ORGIN_DT","2013/05/08".replace("/", ""));
 		map.put("SNDR_IFSC","VSBL0000012");
 		map.put("UTR", "VSBLH13128000024");
-		new TransformerHandler().generateNgrtgsTransId('R', map);
+//		new TransformerHandler().generateNgrtgsTransId('R', map);
 	}
 
 }

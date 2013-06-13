@@ -6,7 +6,7 @@ public interface Transformer {
 
 	void convertToNGRTGS(	String pacName,
 							String businessRule,
-							String transId, HashMap<String, String> headerMap, 
+							HashMap<String, String> headerMap, 
 							HashMap<String, String>  msgBodyMap);
 	
 }

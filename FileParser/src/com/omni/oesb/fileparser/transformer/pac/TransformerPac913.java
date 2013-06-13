@@ -43,7 +43,6 @@ public class TransformerPac913 extends TransformerPacHeader implements Transform
 	
 	public void convertToNGRTGS(String pacName,
 								String businessRule,
-								String transId, 
 								HashMap<String, String> headerMap, 
 								HashMap<String, String>  msgBodyMap){
 		

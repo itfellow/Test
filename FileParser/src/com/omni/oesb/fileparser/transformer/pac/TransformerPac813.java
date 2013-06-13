@@ -44,21 +44,88 @@ import com.omni.util.common.CommonClass;
 public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
 	
 	public void convertToNGRTGS(String pacName,
-								String businessRule,
-								String transId, HashMap<String, String> headerMap, 
-												HashMap<String, String>  msgBodyMap){
+								String businessRule, 
+								HashMap<String, String> headerMap, 
+								HashMap<String, String>  msgBodyMap){
 		
 		String []mergeFile = new String[2];
+		
+		String msgSubTyp = headerMap.get("MSG_SUBTYPE");
+		
+		//DataFormatting/filtering for NEFT & RTGS
+		msgBodyMap = filterData(msgSubTyp,headerMap,msgBodyMap);
+		
+		String transId = generateNgrtgsTransId(msgSubTyp.charAt(0), headerMap);
 		
 		mergeFile[0] = CreadAppHeader(pacName, businessRule, transId, headerMap);
 		
 		mergeFile[1] = createDocumentBody(businessRule, transId, msgBodyMap);
 		
-		String fileName = headerMap.get("MSG_SUBTYPE")+"_"+msgBodyMap.get("TRANS_REF_ID");
+		String fileName = msgSubTyp+"_"+msgBodyMap.get("TRANS_REF_ID");
 		
 		mergePac(fileName, mergeFile);
 		
 	}
+	
+	//
+	private HashMap<String, String>  filterData(String type, HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
+		
+		HashMap<String ,String> filteredData = new HashMap<String, String>();
+		
+		try{
+			String ORGIN_DATE = null;
+			String TOTAL_AMT = null;
+			String CURRENCY = null;
+			String SETLMNT_DATE = null;
+			String SENDER_IFSC = null;
+			String RECIEVER_IFSC = null;
+			String TRANS_REF_LOOP_NO = null;
+			String END_TO_END_ID = null;
+			String TRANS_ID = null;
+			String AMT = null;
+			String PRIORITY_FLAG = null;
+			String CUST_ACNT_NO = null;
+			String CUST_ADRS = null;
+			String BENF_NAME = null;
+			String BENF_ACNT_NO = null;
+			String SENDER_TO_REMITTANCE_INFO = null;
+			
+			if(type.charAt(0)=='R' && type.charAt(0)=='r'){
+				
+				
+			}
+			else{
+				
+				
+			}
+			
+			filteredData.put("ORGIN_DATE", ORGIN_DATE);
+			filteredData.put("TOTAL_AMT", TOTAL_AMT);
+			filteredData.put("CURRENCY", CURRENCY);
+			filteredData.put("SETLMNT_DATE", SETLMNT_DATE);
+			filteredData.put("SENDER_IFSC", SENDER_IFSC);
+			filteredData.put("RECIEVER_IFSC", RECIEVER_IFSC);
+			filteredData.put("TRANS_REF_LOOP_NO", TRANS_REF_LOOP_NO);
+			filteredData.put("END_TO_END_ID", END_TO_END_ID);
+			filteredData.put("TRANS_ID", TRANS_ID);
+			filteredData.put("AMT", AMT);
+			filteredData.put("PRIORITY_FLAG", PRIORITY_FLAG);
+			filteredData.put("CUST_ACNT_NO", CUST_ACNT_NO);
+			filteredData.put("CUST_ADRS", CUST_ADRS);
+			filteredData.put("BENF_NAME", BENF_NAME);
+			filteredData.put("BENF_ACNT_NO", BENF_ACNT_NO);
+			filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
+		}
+		catch(Exception e){
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+		return filteredData;
+	}
+	
 	
 	private String createDocumentBody(String BusinessServiceRule, String transId, HashMap<String, String>  msgBodyMap){
 		
@@ -211,6 +278,8 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			acntId.setOthr(genericAcntId);
 			
 			cashAcnt.setId(acntId);
+			
+			// Set default to INR
 			cashAcnt.setCcy(ActiveOrHistoricCurrencyCode.INR);
 			
 			// below commented code set <tp> This message item is composed of the following BalanceType12element(s):
@@ -325,6 +394,50 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 	
 	
 	// utility methods
+	
+	private String generateNgrtgsTransId(char msgTyp,HashMap<String, String> headerMap){
+		
+		
+		try {
+			
+			
+			if(msgTyp == 'R' || msgTyp == 'r'){
+				
+				String senderIfsc = headerMap.get("SNDR_IFSC");
+				
+				senderIfsc = senderIfsc.substring(0, 4);
+				
+				String creationDate = headerMap.get("ORGIN_DT");
+				
+				char channel = '1';
+				
+				String utr = headerMap.get("UTR");
+				
+				utr = utr.substring(10);
+				
+				String transId = senderIfsc + creationDate + channel + utr;
+				
+				System.out.println("New NGRTGS TransId Generated: "+transId);
+				
+				return transId;
+			}
+			else if(msgTyp == 'N' || msgTyp == 'n'){
+				
+				
+			}
+			else{
+				
+				throw new Exception("msgTyp Not Recognised");
+			
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	private int getAmount(String amtStr){
 		
 		int amt = 0;
