@@ -55,22 +55,27 @@ public class ParserUtil
 			if(msgStrLen==112){
 				filler = msgHeader.substring(83, 93);
 				
-				if(msgSubType.indexOf("R") != -1)  {
+//				if(msgSubType.indexOf("R") != -1)  {
 				
 					UTR = msgHeader.substring(92, 109);
+					
+					if(UTR.equalsIgnoreCase("XXXXXXXXXXXXXXXX")){
+						UTR = null;
+					}
+					
 					priorityFlag = msgHeader.substring(108, 111);
 				
-				}
+//				}
 			}
 			else{
 				filler = msgHeader.substring(83, 92);
 				
-				if(msgSubType.indexOf("R") != -1)  {
+//				if(msgSubType.indexOf("R") != -1)  {
 				
 					UTR = msgHeader.substring(92, 108);
 					priorityFlag = msgHeader.substring(108, 110);
 				
-				}
+//				}
 			}
 			
 			headerMap.put("SNDR_BNK_ID", sndr_bnk_id);

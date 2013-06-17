@@ -99,55 +99,83 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			String SENDER_TO_REMITTANCE_INFO = null;
 			
 			
-			TRANS_ID = transId.substring(0,12);
-			TRANS_ID = TRANS_ID + "R" + transId.substring(11,19);
+			
 			SENDER_IFSC = headerMap.get("SNDR_IFSC");;
 			RECIEVER_IFSC = headerMap.get("RCVR_IFSC");
-			END_TO_END_ID = "/XUTR/"+headerMap.get("UTR");
+			
+			String utrNo = headerMap.get("UTR");
+			if(utrNo != null){
+			
+				END_TO_END_ID = "/XUTR/" + utrNo;
+			
+			}
+			else{
+				
+				END_TO_END_ID = "/XUTR/";
+			}
+			
 			PRIORITY_FLAG = headerMap.get("PRIORITY_FLAG");
 			
 			CURRENCY = msgBodyMap.get("CURRENCY");
 			
+			TRANS_ID = transId.substring(0,12);
+			
+			
 			if(type.charAt(0)=='R' || type.charAt(0)=='r'){
+				
+				TRANS_ID = TRANS_ID + "R" + transId.substring(12,22);
 				
 				TOTAL_AMT = msgBodyMap.get("AMT");
 				
 				TRANS_REF_LOOP_NO = msgBodyMap.get("TRANS_REF_ID");
 				AMT = msgBodyMap.get("AMT");
 				
-				String[] order_cust_dtls = msgBodyMap.get("ORDRNG_CUST").split("\\n");
+				String order_cust = msgBodyMap.get("ORDRNG_CUST");
+				String[] order_cust_dtls = null;
+				
+				if(order_cust != null)
+					order_cust_dtls = order_cust.split("\\n");
 				
 				CUST_ACNT_NO = order_cust_dtls[0];
 				CUST_NAME = order_cust_dtls[1];
 				CUST_ADRS = msgBodyMap.get("ORDRNG_CUST");
 				
 				
-				String[] benf_dtls = msgBodyMap.get("BENF_CUST").split("\\n");
+				String benf_cust = msgBodyMap.get("BENF_CUST");
+				String[] benf_dtls = null;
+				
+				if(benf_cust != null)
+					benf_dtls = benf_cust.split("\\n");
+					
+				String BENF_ADRS = msgBodyMap.get("BENF_CUST");
+				filteredData.put("BENF_ADRS", BENF_ADRS);
 				
 				BENF_ACNT_NO = benf_dtls[0].replace("/", "");
+				filteredData.put("BENF_NAME", benf_dtls[1]);
+				
 				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
+				filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
 				
 			}
 			else if(type.charAt(0)=='N' || type.charAt(0)=='n'){
 				
-				TOTAL_AMT = msgBodyMap.get("SUM_AMT");
+				TRANS_ID = TRANS_ID + "N" + transId.substring(12,22);
 				
 				TRANS_REF_LOOP_NO = msgBodyMap.get("TRANS_LOOP_REF_ID");
 				
 				AMT = msgBodyMap.get("AMT");
 				
-				
 				CUST_ACNT_NO = msgBodyMap.get("CUST_ACNT_NO");
 				CUST_NAME = msgBodyMap.get("CUST_ACNT_NAME");
 				CUST_ADRS = msgBodyMap.get("ORGIN_REMIT");
 				
-				
-				String[] benf_dtls = msgBodyMap.get("BENF_CUST").split("\\n");
-				
 				BENF_ACNT_NO = msgBodyMap.get("BENF_ACNT_NO");
 				
-				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
+				String BENF_NAME = msgBodyMap.get("BENF_ACNT_NAME");
+				filteredData.put("BENF_NAME", BENF_NAME);
 				
+				String BENF_ADRS = msgBodyMap.get("BENF_ADRS");
+				filteredData.put("BENF_ADRS", BENF_ADRS);
 			}
 			else{
 				System.out.println("Warning: Message Type Not Identified, Check the Message");
@@ -170,7 +198,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			filteredData.put("CUST_ADRS", CUST_ADRS);
 			filteredData.put("CUST_NAME", CUST_NAME);
 			filteredData.put("BENF_ACNT_NO", BENF_ACNT_NO);
-			filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
+			
 		}
 		catch(Exception e){
 			
@@ -200,7 +228,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			// greogrian calender example:- 2013-10-18T09:00:00
 			// set Date and time here
-			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime(msgBodyMap.get("ORGIN_DATE"),msgBodyMap.get("ORGIN_TIME")));
+			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime(msgBodyMap.get("ORGIN_DATE"),msgBodyMap.get("ORGIN_TIME"), false));
 			grpHdr.setNbOfTxs("1");					// number given in String
 			
 			ActiveCurrencyAndAmount actvCurrencyAndAmt = new ActiveCurrencyAndAmount();
@@ -311,26 +339,74 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			// set ChargeBearer Codes used are: CRED/DEBT/SHAR/SLEV
 			cdtTrfTxInf.setChrgBr(ChargeBearerType1Code.DEBT);
 			
-			PartyIdentification43 partyId = new PartyIdentification43();
-			
-			String[] order_custDtls = msgBodyMap.get("CUST_ADRS").split("\\n");
-			
-			// set Address Line 1 here
-			partyId.setNm(order_custDtls[2]);
-	
-			PostalAddress6 postalAdrs = new PostalAddress6();
-			
-			// set Address Line 2 here (List add items to add next Line)
-			int order_custDtls_len = order_custDtls.length;
-			
-			for(int i=3 ; i < order_custDtls_len ; i++){
-				postalAdrs.getAdrLine().add(order_custDtls[i]);
+			if(msg_sub_typ.charAt(0)=='R' || msg_sub_typ.charAt(0)=='r'){
+				
+				PartyIdentification43 partyId = new PartyIdentification43();
+				
+				String cust_name = msgBodyMap.get("CUST_NAME");
+				
+				// set cust name here for RTGS
+				if(cust_name!=null)
+					partyId.setNm(cust_name);
+		
+				PostalAddress6 postalAdrs = new PostalAddress6();
+				
+				// set cust adrs here (List add items to add next Line) for RTGS
+				String custAdrs = msgBodyMap.get("CUST_ADRS");
+				String[] cust_adrs_Dtls  = null;
+				
+				if(custAdrs!=null)
+					cust_adrs_Dtls = custAdrs.split("\\n");
+				
+				if(cust_adrs_Dtls!=null){
+					int cust_adrs_Dtls_len = cust_adrs_Dtls.length;
+					if(cust_adrs_Dtls_len > 0){
+						for(int i=2 ; i < cust_adrs_Dtls_len ; i++){
+							postalAdrs.getAdrLine().add(cust_adrs_Dtls[i]);
+						}
+						
+						partyId.setPstlAdr(postalAdrs);
+					}
+				}
+				
+				cdtTrfTxInf.setDbtr(partyId);
+			}
+			else{
+				PartyIdentification43 partyId = new PartyIdentification43();
+				
+				String cust_name = msgBodyMap.get("CUST_NAME");
+				
+				// set cust name here for NEFT
+				if(cust_name!=null)
+					partyId.setNm(cust_name);
+		
+				PostalAddress6 postalAdrs = new PostalAddress6();
+				
+				// set cust adrs here (List add items to add next Line) for NEFT
+				String custAdrs = msgBodyMap.get("CUST_ADRS");
+				String[] cust_adrs_Dtls  = null;
+				
+				if(custAdrs!=null)
+					cust_adrs_Dtls = custAdrs.split("\\n");
+				
+				if(cust_adrs_Dtls!=null){
+					int cust_adrs_Dtls_len = cust_adrs_Dtls.length;
+					if(cust_adrs_Dtls_len > 0){
+						for(int i=0 ; i < cust_adrs_Dtls_len ; i++){
+							postalAdrs.getAdrLine().add(cust_adrs_Dtls[i]);
+						}
+						
+						partyId.setPstlAdr(postalAdrs);
+					}
+				}
+				
+				cdtTrfTxInf.setDbtr(partyId);
 			}
 			
 			
-			partyId.setPstlAdr(postalAdrs);
+		
 			
-			cdtTrfTxInf.setDbtr(partyId);
+		
 			
 			CashAccount24 cashAcnt = new CashAccount24();
 			
@@ -388,14 +464,68 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			cdtTrfTxInf.setCdtrAgt(branchFitIdCdtrAgt);
 			
-			partyId = new PartyIdentification43();
-			
-			// set  Customer Name
-			partyId.setNm(msgBodyMap.get("CUST_NAME").toUpperCase());
-			
-			// partyId.setPstlAdr(null);
-			
-			cdtTrfTxInf.setCdtr(partyId);
+			if(msg_sub_typ.charAt(0)=='R' || msg_sub_typ.charAt(0)=='r'){
+				
+				PartyIdentification43 partyId = new PartyIdentification43();
+				
+				String benf_name = msgBodyMap.get("BENF_NAME").toUpperCase();
+				// set Benf Customer Name for RTGS
+				if(benf_name!=null)
+					partyId.setNm(benf_name);
+				
+				PostalAddress6 postalAdrs = new PostalAddress6();
+				
+				// set Benf Customer Adrs for RTGS
+				String benfAdrs = msgBodyMap.get("BENF_ADRS");
+				String[] benfAdrsDtls = null;
+				
+				if(benfAdrs!=null)
+					benfAdrsDtls = msgBodyMap.get("BENF_ADRS").split("\\n");
+				
+				if(benfAdrsDtls!=null){
+					int benf_adrs_len = benfAdrsDtls.length;
+					if(benf_adrs_len > 0){
+						for(int i=2 ; i < benf_adrs_len ; i++){
+							postalAdrs.getAdrLine().add(benfAdrsDtls[i]);
+						}
+					}
+				}
+				partyId.setPstlAdr(postalAdrs);
+				
+				cdtTrfTxInf.setCdtr(partyId);
+				
+			}
+			else{
+				
+				PartyIdentification43 partyId = new PartyIdentification43();
+				
+				String benf_name = msgBodyMap.get("BENF_NAME").toUpperCase();
+				// set Benf Customer Name for NEFT
+				if(benf_name!=null)
+					partyId.setNm(benf_name);
+				
+				PostalAddress6 postalAdrs = new PostalAddress6();
+				
+				// set Benf Customer Adrs for NEFT
+				String benfAdrs = msgBodyMap.get("BENF_ADRS");
+				String[] benfAdrsDtls = null;
+				
+				if(benfAdrs!=null)
+					benfAdrsDtls = msgBodyMap.get("BENF_ADRS").split("\\n");
+				
+				if(benfAdrsDtls!=null){
+					int benf_adrs_len = benfAdrsDtls.length;
+					if(benf_adrs_len > 0){
+						for(int i=1 ; i < benf_adrs_len ; i++){
+							postalAdrs.getAdrLine().add(benfAdrsDtls[i]);
+						}
+					}
+				}
+				partyId.setPstlAdr(postalAdrs);
+				
+				cdtTrfTxInf.setCdtr(partyId);
+				
+			}
 			
 			cashAcnt = new CashAccount24();
 			
@@ -438,11 +568,11 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			cdtTrfTxInf.setChrgsInf(null);
 			
-			if(msg_sub_typ.charAt(0) == 'N' || msg_sub_typ.charAt(0) == 'n'){
+//			if(msg_sub_typ.charAt(0) == 'N' || msg_sub_typ.charAt(0) == 'n'){
 				InstructionForCreditorAgent1 instructionCode = new InstructionForCreditorAgent1();
 				instructionCode.setCd(Instruction3Code.PHOB);
 				cdtTrfTxInf.getInstrForCdtrAgt().add(instructionCode);
-			}
+//			}
 			
 			
 			FIToFICustomerCreditTransferV03 fIToFICustomerCredit = factoryPac008.createFIToFICustomerCreditTransferV03();
@@ -486,32 +616,48 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 	
 	private String generateNgrtgsTransId(char msgTyp,HashMap<String, String> headerMap){
 		
+		// 	transId Format Used to generate in HDFC Bank: sender_IFSC(4) + date(8) + channel default set to 1 + utr(11 to 16)
+		//	ex: BNKA20130306006000000
+		
+		// transId Format according to RBI Documentation: 
 		
 		try {
 			
+			String senderIfsc = headerMap.get("SNDR_IFSC");
+			
+			senderIfsc = senderIfsc.substring(0, 4);
+			
+			String creationDate = headerMap.get("ORGIN_DT").replace("/", "");
+			
+			char channel = '1';
 			
 			if(msgTyp == 'R' || msgTyp == 'r'){
 				
-				String senderIfsc = headerMap.get("SNDR_IFSC");
-				
-				senderIfsc = senderIfsc.substring(0, 4);
-				
-				String creationDate = headerMap.get("ORGIN_DT").replace("/", "");
-				
-				char channel = '1';
 				
 				String utr = headerMap.get("UTR");
 				
-				utr = utr.substring(10);
+				utr = utr.substring(10) + "000";
 				
-				String transId = senderIfsc + creationDate + channel + utr;
+				String transId = senderIfsc + creationDate + channel + utr ;
 				
 				System.out.println("New NGRTGS TransId Generated: "+transId);
 				
 				return transId;
 			}
 			else if(msgTyp == 'N' || msgTyp == 'n'){
+				String str = headerMap.get("UTR");
 				
+				if(str!=null){
+					str = str.substring(10) + "000";
+				}
+				else{
+					str = headerMap.get("SEQ_NUM");
+				}
+				String transId = senderIfsc + creationDate + channel + str;
+				
+				System.out.println("New NGRTGS TransId Generated: "+transId);
+				
+				return transId;
 				
 			}
 			else{

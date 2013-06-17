@@ -3,12 +3,17 @@ package com.omni.oesb.fileparser.transformer.pac;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.Serializable;
+import java.sql.Blob;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
+import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
+
+import org.w3c.dom.Element;
 
 import com.omni.oesb.DigitalSignature.SignData;
 import com.omni.oesb.fileparser.Util.FileReaderUtil;
@@ -22,6 +27,7 @@ import com.omni.oesb.transformer.xml.head_001_001_01.ObjectFactory;
 import com.omni.oesb.transformer.xml.head_001_001_01.Party9Choice;
 import com.omni.oesb.transformer.xml.head_001_001_01.SignatureEnvelope;
 import com.omni.util.common.PropAccess;
+import com.sun.org.apache.xml.internal.security.signature.XMLSignature;
 
 
 
@@ -90,7 +96,7 @@ public abstract class TransformerPacHeader {
 			
 			String date = headerMap.get("ORGIN_DT");
 			String time = headerMap.get("ORGIN_TIME");
-			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime(date, time));
+			appHeadr.setCreDt(TransformerUtil.convertToXMLGregorianDateTime(date, time, true));
 			
 			// set possible duplicate emission flag here
 			if(headerMap.get("POSBL_DUP_EMSN_FLAG").equals("1")){
@@ -104,7 +110,8 @@ public abstract class TransformerPacHeader {
 			
 			SignatureEnvelope signEnvlop = new SignatureEnvelope();
 			
-			
+//			 String sign = "hiThereFellow";
+//			 XMLSignature xml_sign = new XMLSignature( null);
 			
 			signEnvlop.setAny(null);
 			
@@ -191,19 +198,20 @@ public abstract class TransformerPacHeader {
 				} 
 				catch(Exception e) 
 				{
-					 e.printStackTrace();			 
+					 e.printStackTrace();	
+					 System.exit(0);
 				} 
-				finally{
-					File fileDelete = new File(mergeFile[0]);
-					if(fileDelete.exists())
-						fileDelete.delete();					// delete AppXXX File from XML Cache Folder
-					
-					fileDelete = new File(mergeFile[1]);	
-					if(fileDelete.exists())
-						fileDelete.delete();					// delete DocBodyXXX File from XML Cache Folder
-				}
+			
 			}
 		}
+		
+		File fileDelete = new File(mergeFile[0]);
+		if(fileDelete.exists())
+			fileDelete.delete();					// delete AppXXX File from XML Cache Folder
+		
+		fileDelete = new File(mergeFile[1]);	
+		if(fileDelete.exists())
+			fileDelete.delete();					// delete DocBodyXXX File from XML Cache Folder
 		
 		fileData.append("</RequestPayload>");
 		

@@ -53,7 +53,7 @@ public class TransformerPac913 extends TransformerPacHeader implements Transform
 			/*GrpHdr*/
 			GroupHeader51 grpHdr = new GroupHeader51();
 			grpHdr.setMsgId("SBIC201310181000000301");
-			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime("20131018","1000"));
+			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime("20131018","1000",false));
 			grpHdr.setNbOfTxs("1");
 
 		/*settlmntInf*/
@@ -61,7 +61,7 @@ public class TransformerPac913 extends TransformerPacHeader implements Transform
 		activeCrncyAndAmt.setCcy("INR");
 		activeCrncyAndAmt.setValue(new BigDecimal(3453453));
 		grpHdr.setTtlIntrBkSttlmAmt(activeCrncyAndAmt);
-		grpHdr.setIntrBkSttlmDt(TransformerUtil.convertToXMLGregorianDateTime("20131018","1000"));
+		grpHdr.setIntrBkSttlmDt(TransformerUtil.convertToXMLGregorianDateTime("20131018","1000",false));
 
 
 			SettlementInstruction1 settlmntInf = new SettlementInstruction1();

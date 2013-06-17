@@ -18,7 +18,7 @@ public final class TransformerUtil {
 	 * @param time
 	 * @return {@link XMLGregorianCalendar}
 	 */
-	public static XMLGregorianCalendar convertToXMLGregorianDateTime(String date,String time){
+	public static XMLGregorianCalendar convertToXMLGregorianDateTime(String date,String time,boolean isNormailize){
 		
 		XMLGregorianCalendar dateTime = null;
 		
@@ -56,7 +56,6 @@ public final class TransformerUtil {
 					cal.set(Calendar.SECOND,0);
 					
 				gregorianDateTime.setTime(cal.getTime());
-			
 				dateTime = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianDateTime);
 				dateTime.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
 				dateTime.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
