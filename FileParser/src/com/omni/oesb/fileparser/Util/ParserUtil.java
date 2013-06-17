@@ -109,6 +109,7 @@ public class ParserUtil
 	{
 		
 		
+		@SuppressWarnings("unchecked")
 		ArrayList<String>[] msgFormatDataList = new ArrayList[2];
 		msgFormatDataList[0] = new ArrayList<String>();
 		msgFormatDataList[1] = new ArrayList<String>();
@@ -222,7 +223,6 @@ public class ParserUtil
 				
 				Pattern umacPattern = Pattern.compile(AppConstants.MSG_UMAC_BLOCK_PATTERN);
 				Matcher umacPatternMatcher = umacPattern.matcher(msgBlock);
-				String UMAC = null;
 				while(umacPatternMatcher.find()) {
 					// UMAC Part of Message (UMAC contain Unique Digital Signature of the Message)
 					isUMACRequired = "0";
@@ -340,7 +340,8 @@ public class ParserUtil
 			int dataListCount = dataList[0].size();
 			//System.out.println("dataListCount ====> "+dataListCount);
 			
-			ArrayList<String>[] repeatedStrList = new ArrayList[3];
+			@SuppressWarnings("unchecked")
+			ArrayList<String>[] repeatedStrList = new  ArrayList[3];
 			repeatedStrList[0] = new ArrayList<String>();
 			repeatedStrList[1] = new ArrayList<String>();
 			repeatedStrList[2] = new ArrayList<String>();

@@ -240,7 +240,6 @@ public class TableData {
 		protected Object[] setR42(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 			
 			Object[] obj =  new Object[2];
-			@SuppressWarnings("unused")
 			CommonTransactionDtlsVo common = new CommonTransactionDtlsVo();
 			R42Data r42 = new R42Data();
 			

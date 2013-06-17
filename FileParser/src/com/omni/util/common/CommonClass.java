@@ -5,8 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.omni.oesb.common.AppConstants;
-
 public final class CommonClass
 {
   /*

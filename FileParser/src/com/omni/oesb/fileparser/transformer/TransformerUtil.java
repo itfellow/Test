@@ -14,18 +14,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public final class TransformerUtil {
 	/**
 	 * Convert String Date Time to XMLGregorianCalendar Format
-	 * @param Date
+	 * @param date
 	 * @param time
 	 * @return {@link XMLGregorianCalendar}
 	 */
-	public static XMLGregorianCalendar convertToXMLGregorianDateTime(String Date,String time){
+	public static XMLGregorianCalendar convertToXMLGregorianDateTime(String date,String time){
 		
 		XMLGregorianCalendar dateTime = null;
-		if(Date!=null && time!=null){
-			
-			int day = Integer.parseInt(Date.substring(6));
-			int month = Integer.parseInt(Date.substring(4, 6));
-			int year = Integer.parseInt(Date.substring(0, 4));
+		
+		if(date!=null && time!=null){
+			date = date.replace("/", "");
+			int day = Integer.parseInt(date.substring(6));
+			int month = Integer.parseInt(date.substring(4, 6));
+			int year = Integer.parseInt(date.substring(0, 4));
 			
 			try{
 				

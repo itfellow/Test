@@ -3,6 +3,7 @@ package com.omni.oesb.fileparser.transformer.pac;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -28,6 +29,8 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.FinancialInstitutionIdentif
 import com.omni.oesb.transformer.xml.pacs_008_001_03.FinancialInstitutionIdentification8DbtrAgt;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.GenericAccountIdentification1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.GroupHeader49;
+import com.omni.oesb.transformer.xml.pacs_008_001_03.Instruction3Code;
+import com.omni.oesb.transformer.xml.pacs_008_001_03.InstructionForCreditorAgent1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.LocalInstrument2Choice;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.ObjectFactory;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.PartyIdentification43;
@@ -39,9 +42,13 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.RemittanceInformation7;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.ServiceLevel8Choice;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementInstruction1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
-import com.omni.util.common.CommonClass;
+import com.omni.util.common.PropAccess;
 
 public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
+	
+	private ResourceBundle bundle 		= PropAccess.getResourceBundle();
+	
+	private String transIdGen = bundle.getString("TransIdGenFlag").trim();
 	
 	public void convertToNGRTGS(String pacName,
 								String businessRule, 
@@ -52,31 +59,32 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		
 		String msgSubTyp = headerMap.get("MSG_SUBTYPE");
 		
-		//DataFormatting/filtering for NEFT & RTGS
-		msgBodyMap = filterData(msgSubTyp,headerMap,msgBodyMap);
-		
 		String transId = generateNgrtgsTransId(msgSubTyp.charAt(0), headerMap);
 		
 		mergeFile[0] = CreadAppHeader(pacName, businessRule, transId, headerMap);
 		
+		//DataFormatting/filtering for NEFT & RTGS
+		msgBodyMap = filterData(transId,msgSubTyp,headerMap,msgBodyMap);
+				
 		mergeFile[1] = createDocumentBody(businessRule, transId, msgBodyMap);
 		
-		String fileName = msgSubTyp+"_"+msgBodyMap.get("TRANS_REF_ID");
+		String fileName = msgSubTyp+"_"+transId;
 		
 		mergePac(fileName, mergeFile);
 		
 	}
 	
 	//
-	private HashMap<String, String>  filterData(String type, HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
+	private HashMap<String, String>  filterData(String transId,String type, HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
 		HashMap<String ,String> filteredData = new HashMap<String, String>();
 		
 		try{
-			String ORGIN_DATE = null;
+			
+			String ORGIN_DATE = headerMap.get("ORGIN_DT").replace("/", "");
+			String ORGIN_TIME = headerMap.get("ORGIN_TIME");
 			String TOTAL_AMT = null;
 			String CURRENCY = null;
-			String SETLMNT_DATE = null;
 			String SENDER_IFSC = null;
 			String RECIEVER_IFSC = null;
 			String TRANS_REF_LOOP_NO = null;
@@ -86,23 +94,71 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			String PRIORITY_FLAG = null;
 			String CUST_ACNT_NO = null;
 			String CUST_ADRS = null;
-			String BENF_NAME = null;
+			String CUST_NAME = null;
 			String BENF_ACNT_NO = null;
 			String SENDER_TO_REMITTANCE_INFO = null;
 			
-			if(type.charAt(0)=='R' && type.charAt(0)=='r'){
+			
+			TRANS_ID = transId.substring(0,12);
+			TRANS_ID = TRANS_ID + "R" + transId.substring(11,19);
+			SENDER_IFSC = headerMap.get("SNDR_IFSC");;
+			RECIEVER_IFSC = headerMap.get("RCVR_IFSC");
+			END_TO_END_ID = "/XUTR/"+headerMap.get("UTR");
+			PRIORITY_FLAG = headerMap.get("PRIORITY_FLAG");
+			
+			CURRENCY = msgBodyMap.get("CURRENCY");
+			
+			if(type.charAt(0)=='R' || type.charAt(0)=='r'){
 				
+				TOTAL_AMT = msgBodyMap.get("AMT");
+				
+				TRANS_REF_LOOP_NO = msgBodyMap.get("TRANS_REF_ID");
+				AMT = msgBodyMap.get("AMT");
+				
+				String[] order_cust_dtls = msgBodyMap.get("ORDRNG_CUST").split("\\n");
+				
+				CUST_ACNT_NO = order_cust_dtls[0];
+				CUST_NAME = order_cust_dtls[1];
+				CUST_ADRS = msgBodyMap.get("ORDRNG_CUST");
+				
+				
+				String[] benf_dtls = msgBodyMap.get("BENF_CUST").split("\\n");
+				
+				BENF_ACNT_NO = benf_dtls[0].replace("/", "");
+				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
+				
+			}
+			else if(type.charAt(0)=='N' || type.charAt(0)=='n'){
+				
+				TOTAL_AMT = msgBodyMap.get("SUM_AMT");
+				
+				TRANS_REF_LOOP_NO = msgBodyMap.get("TRANS_LOOP_REF_ID");
+				
+				AMT = msgBodyMap.get("AMT");
+				
+				
+				CUST_ACNT_NO = msgBodyMap.get("CUST_ACNT_NO");
+				CUST_NAME = msgBodyMap.get("CUST_ACNT_NAME");
+				CUST_ADRS = msgBodyMap.get("ORGIN_REMIT");
+				
+				
+				String[] benf_dtls = msgBodyMap.get("BENF_CUST").split("\\n");
+				
+				BENF_ACNT_NO = msgBodyMap.get("BENF_ACNT_NO");
+				
+				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
 				
 			}
 			else{
-				
-				
+				System.out.println("Warning: Message Type Not Identified, Check the Message");
+				System.exit(0);
 			}
 			
+			filteredData.put("MSG_SUBTYPE", headerMap.get("MSG_SUBTYPE"));
 			filteredData.put("ORGIN_DATE", ORGIN_DATE);
+			filteredData.put("ORGIN_TIME", ORGIN_TIME);
 			filteredData.put("TOTAL_AMT", TOTAL_AMT);
 			filteredData.put("CURRENCY", CURRENCY);
-			filteredData.put("SETLMNT_DATE", SETLMNT_DATE);
 			filteredData.put("SENDER_IFSC", SENDER_IFSC);
 			filteredData.put("RECIEVER_IFSC", RECIEVER_IFSC);
 			filteredData.put("TRANS_REF_LOOP_NO", TRANS_REF_LOOP_NO);
@@ -112,7 +168,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			filteredData.put("PRIORITY_FLAG", PRIORITY_FLAG);
 			filteredData.put("CUST_ACNT_NO", CUST_ACNT_NO);
 			filteredData.put("CUST_ADRS", CUST_ADRS);
-			filteredData.put("BENF_NAME", BENF_NAME);
+			filteredData.put("CUST_NAME", CUST_NAME);
 			filteredData.put("BENF_ACNT_NO", BENF_ACNT_NO);
 			filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
 		}
@@ -131,6 +187,8 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 		
 		try{
 			
+			String msg_sub_typ = msgBodyMap.get("MSG_SUBTYPE");
+			
 			ObjectFactory factoryPac008 = new ObjectFactory();
 			
 			/******************** Group Header Starts here ***************/
@@ -142,7 +200,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			// greogrian calender example:- 2013-10-18T09:00:00
 			// set Date and time here
-			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime(msgBodyMap.get("VALUE_DATE"), CommonClass.getCurrentTimeStr()));
+			grpHdr.setCreDtTm(TransformerUtil.convertToXMLGregorianDateTime(msgBodyMap.get("ORGIN_DATE"),msgBodyMap.get("ORGIN_TIME")));
 			grpHdr.setNbOfTxs("1");					// number given in String
 			
 			ActiveCurrencyAndAmount actvCurrencyAndAmt = new ActiveCurrencyAndAmount();
@@ -151,13 +209,13 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			actvCurrencyAndAmt.setCcy(msgBodyMap.get("CURRENCY"));
 			
 			// Set total amt here
-			actvCurrencyAndAmt.setValue(new BigDecimal(5000000));
+			actvCurrencyAndAmt.setValue(new BigDecimal(Double.parseDouble(msgBodyMap.get("AMT"))));
 			
 			
 			grpHdr.setTtlIntrBkSttlmAmt(actvCurrencyAndAmt);	
 			
 			//set Settelment Date here
-			grpHdr.setIntrBkSttlmDt(TransformerUtil.convertToXMLGregorianDate("20121018"));
+			grpHdr.setIntrBkSttlmDt(TransformerUtil.convertToXMLGregorianDate(msgBodyMap.get("ORGIN_DATE")));
 			
 			SettlementInstruction1 SttlmInf = new SettlementInstruction1();
 			
@@ -174,7 +232,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			ClearingSystemMemberIdentification2 MmbId = new ClearingSystemMemberIdentification2();
 			
 			// Set Sender Ifsc here
-			MmbId.setMmbId("SBIC0004080");
+			MmbId.setMmbId(msgBodyMap.get("SENDER_IFSC"));
 			
 			FinInstnId.setClrSysMmbId(MmbId);
 			
@@ -187,7 +245,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			MmbId = new ClearingSystemMemberIdentification2();
 			
 			// Set Receiver Ifsc here
-			MmbId.setMmbId("ALLA0211214");
+			MmbId.setMmbId(msgBodyMap.get("RECIEVER_IFSC"));
 			
 			FinInstnId.setClrSysMmbId(MmbId);
 			
@@ -200,10 +258,10 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			PaymentIdentification3 pmtId = new PaymentIdentification3();
 			
 			//	set transRef loop no
-			pmtId.setInstrId("TRN0000000000001");
+			pmtId.setInstrId(msgBodyMap.get("TRANS_REF_LOOP_NO"));
 			
 			// set utr no
-			pmtId.setEndToEndId("/XUTR/TESTH11000000301");
+			pmtId.setEndToEndId(msgBodyMap.get("END_TO_END_ID"));
 			
 			// set tranaction Id
 			pmtId.setTxId(transId);
@@ -221,7 +279,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			//set prority here
 			
-			SvcLvl.setPrtry("99");
+			SvcLvl.setPrtry(msgBodyMap.get("PRIORITY_FLAG"));
 			
 			paymentTypeInfo.setSvcLvl(SvcLvl);
 			
@@ -245,7 +303,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			actvCurrencyAndAmt.setCcy(msgBodyMap.get("CURRENCY"));
 			
 			// set amt here
-			actvCurrencyAndAmt.setValue(new BigDecimal(getAmount("AMT")));
+			actvCurrencyAndAmt.setValue(new BigDecimal(getAmount(msgBodyMap.get("AMT"))));
 			
 			cdtTrfTxInf.setIntrBkSttlmAmt(actvCurrencyAndAmt);
 			
@@ -255,13 +313,20 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			PartyIdentification43 partyId = new PartyIdentification43();
 			
+			String[] order_custDtls = msgBodyMap.get("CUST_ADRS").split("\\n");
+			
 			// set Address Line 1 here
-			partyId.setNm("Address Line 1");
+			partyId.setNm(order_custDtls[2]);
 	
 			PostalAddress6 postalAdrs = new PostalAddress6();
 			
 			// set Address Line 2 here (List add items to add next Line)
-			postalAdrs.getAdrLine().add("Address Line 2");
+			int order_custDtls_len = order_custDtls.length;
+			
+			for(int i=3 ; i < order_custDtls_len ; i++){
+				postalAdrs.getAdrLine().add(order_custDtls[i]);
+			}
+			
 			
 			partyId.setPstlAdr(postalAdrs);
 			
@@ -274,7 +339,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			GenericAccountIdentification1 genericAcntId = new GenericAccountIdentification1();
 			
 			// set order Customer (customer Account no) (Debtor's Account number)
-			genericAcntId.setId("SBI7510000101007");
+			genericAcntId.setId(msgBodyMap.get("CUST_ACNT_NO"));
 			acntId.setOthr(genericAcntId);
 			
 			cashAcnt.setId(acntId);
@@ -296,7 +361,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			ClearingSystemMemberIdentification2 clrSysMmbId = new ClearingSystemMemberIdentification2();
 			
 			// set order institution / sender ifsc
-			clrSysMmbId.setMmbId("SBIC0004080");
+			clrSysMmbId.setMmbId(msgBodyMap.get("SENDER_IFSC"));
 			
 			finInstnIdDbtrAgt.setClrSysMmbId(clrSysMmbId);
 			
@@ -312,7 +377,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			ClearingSystemMemberIdentification2 clrSysMmbId2 = new ClearingSystemMemberIdentification2();
 			
 			// Set Beneficiary IFSC or Receiver Ifsc here or Beneficiary Institution identification
-			clrSysMmbId2.setMmbId("ALLA0211214");
+			clrSysMmbId2.setMmbId(msgBodyMap.get("RECIEVER_IFSC"));
 			
 			fitIdCdtrAgt.setClrSysMmbId(clrSysMmbId2);
 			
@@ -325,10 +390,9 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			partyId = new PartyIdentification43();
 			
-			// set Beneficiary Customer Name
-			partyId.setNm("Karthik_Menon");
+			// set  Customer Name
+			partyId.setNm(msgBodyMap.get("CUST_NAME").toUpperCase());
 			
-			// set Beneficary Customer Addres
 			// partyId.setPstlAdr(null);
 			
 			cdtTrfTxInf.setCdtr(partyId);
@@ -340,7 +404,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			genericAcntId = new GenericAccountIdentification1();
 			
 			// set beneficary Acnt No here
-			genericAcntId.setId("HDFC000001102015");
+			genericAcntId.setId(msgBodyMap.get("BENF_ACNT_NO"));
 			
 			acntId.setOthr(genericAcntId);
 			cashAcnt.setId(acntId);
@@ -351,13 +415,36 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			
 			RemittanceInformation7 remittanceInfo = new RemittanceInformation7();
 			
-			// set Sender to Receiver Information or Beneficiary Customer's Postal Address(add item)
-			remittanceInfo.getUstrd().add("/URGENT/RECEIPT 1001");
-			remittanceInfo.getUstrd().add("//PLEASE PROCESS QUICKLY");
+			if(msg_sub_typ.charAt(0) == 'R' || msg_sub_typ.charAt(0) == 'r'){
+				
+				String[] sender_to_remit_dtls = msgBodyMap.get("SENDER_TO_REMITTANCE_INFO").split("\\n");
+				
+				// set Sender to Receiver Information or Beneficiary Customer's Postal Address(add item)
+				int len = sender_to_remit_dtls.length;
+				for(int i = 0 ; i < len; i++){
+					remittanceInfo.getUstrd().add(sender_to_remit_dtls[i]);
+				}
+			}
+			else{
+				
+				remittanceInfo.getUstrd().add(null);
+				
+			}
+			
+			
+			
 			cdtTrfTxInf.setRmtInf(remittanceInfo);
 			
+			
 			cdtTrfTxInf.setChrgsInf(null);
-	
+			
+			if(msg_sub_typ.charAt(0) == 'N' || msg_sub_typ.charAt(0) == 'n'){
+				InstructionForCreditorAgent1 instructionCode = new InstructionForCreditorAgent1();
+				instructionCode.setCd(Instruction3Code.PHOB);
+				cdtTrfTxInf.getInstrForCdtrAgt().add(instructionCode);
+			}
+			
+			
 			FIToFICustomerCreditTransferV03 fIToFICustomerCredit = factoryPac008.createFIToFICustomerCreditTransferV03();
 			
 			fIToFICustomerCredit.setGrpHdr(grpHdr);
@@ -383,9 +470,11 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 	        marshaller.marshal(element,System.out);
 	        
 	        return docBodyAbsPath;
+	        
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			System.exit(0);
 		}
 		
 		return null;
@@ -407,7 +496,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 				
 				senderIfsc = senderIfsc.substring(0, 4);
 				
-				String creationDate = headerMap.get("ORGIN_DT");
+				String creationDate = headerMap.get("ORGIN_DT").replace("/", "");
 				
 				char channel = '1';
 				
@@ -438,11 +527,11 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 	}
 	
 	
-	private int getAmount(String amtStr){
+	private Double getAmount(String amtStr){
 		
-		int amt = 0;
+		Double amt = 0.0;
 		if(amtStr!=null){
-			amt = Integer.parseInt(amtStr);
+			amt = Double.parseDouble(amtStr);
 		}
 		
 		return amt;

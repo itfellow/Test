@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.omni.component.hibernate.DatabaseUtil;
-import com.omni.oesb.data.XmlTransformerMap;
 import com.omni.oesb.fileparser.transformer.pac.Transformer;
 
 public class TransformerHandler {

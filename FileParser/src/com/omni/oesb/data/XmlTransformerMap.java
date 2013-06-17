@@ -8,7 +8,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import com.omni.oesb.omh.notification.data.MessageTypeMst;
 
 @Entity
 @Table(name = "xml_transformer_map")

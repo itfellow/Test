@@ -83,6 +83,7 @@ public class MessageDataFilter {
 		if(currencyAmtStr!=null){
 			String []currencyAmt = parseAmount(currencyAmtStr);
 			dataFilter.remove("AMT");
+			dataFilter.put("CURRENCY", currencyAmt[0]);
 			dataFilter.put("AMT", currencyAmt[1]);
 		}
 		

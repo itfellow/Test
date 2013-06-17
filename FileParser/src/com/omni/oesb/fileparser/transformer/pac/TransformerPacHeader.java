@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 
+import com.omni.oesb.DigitalSignature.SignData;
 import com.omni.oesb.fileparser.Util.FileReaderUtil;
 import com.omni.oesb.fileparser.transformer.TransformerUtil;
 import com.omni.oesb.transformer.xml.head_001_001_01.BranchAndFinancialInstitutionIdentification5;
@@ -35,13 +36,13 @@ public abstract class TransformerPacHeader {
 	String xmlCachePath = bundle.getString("xmlCacheFolder").trim();
 	
 	String xmlTransformPath = bundle.getString("xmlTransformPath").trim();
-		
+	
 	protected String CreadAppHeader(String pacName,String BusinessServiceRule, String transId, HashMap<String, String> headerMap){
 		
 		try{
 			
 			ObjectFactory factoryHead001 = new ObjectFactory();
-	
+			
 			BusinessApplicationHeaderV01 appHeadr = new BusinessApplicationHeaderV01();
 			
 			Party9Choice partyChoice = new Party9Choice();
@@ -130,6 +131,7 @@ public abstract class TransformerPacHeader {
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			System.exit(0);
 		}
 		return null;
 	}
@@ -181,18 +183,25 @@ public abstract class TransformerPacHeader {
 						fileData.append("\n");
 
 					}
-					
 					if(fileReader != null)
 						fileReader.close();
 					
 					if(bufferedReader != null)
 						bufferedReader.close();
-					
 				} 
 				catch(Exception e) 
 				{
 					 e.printStackTrace();			 
 				} 
+				finally{
+					File fileDelete = new File(mergeFile[0]);
+					if(fileDelete.exists())
+						fileDelete.delete();					// delete AppXXX File from XML Cache Folder
+					
+					fileDelete = new File(mergeFile[1]);	
+					if(fileDelete.exists())
+						fileDelete.delete();					// delete DocBodyXXX File from XML Cache Folder
+				}
 			}
 		}
 		

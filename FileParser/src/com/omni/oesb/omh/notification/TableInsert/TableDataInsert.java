@@ -2,15 +2,11 @@ package com.omni.oesb.omh.notification.TableInsert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import org.hibernate.HibernateException;
 
 import com.omni.component.logging.FileLogger;
 import com.omni.oesb.common.AppConstants;
 import com.omni.oesb.notification.TableInsert.vo.CommonAckStatusVo;
 import com.omni.oesb.notification.TableInsert.vo.CommonTransactionDtlsVo;
-import com.omni.oesb.omh.notification.data.MessageHeader;
 import com.omni.oesb.omh.notification.data.N06Data;
 import com.omni.oesb.omh.notification.data.N09Data;
 import com.omni.oesb.omh.notification.data.N10Data;
@@ -166,7 +162,6 @@ public class TableDataInsert extends TableData {
 	
 	
 	
-	@SuppressWarnings("unused")
 	private String insertNeftAckTypMsg(HashMap<String,String> headerMap,HashMap<String,String> msgBodyMap){
 		String parseStatus = AppConstants.MSG_PARSE_ERROR;
 		
