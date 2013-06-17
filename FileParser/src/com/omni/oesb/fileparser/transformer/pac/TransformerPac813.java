@@ -126,7 +126,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 				
 				BENF_ACNT_NO = benf_dtls[0].replace("/", "");
 				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
-				
+				filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
 			}
 			else if(type.charAt(0)=='N' || type.charAt(0)=='n'){
 				
@@ -136,17 +136,11 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 				
 				AMT = msgBodyMap.get("AMT");
 				
-				
 				CUST_ACNT_NO = msgBodyMap.get("CUST_ACNT_NO");
 				CUST_NAME = msgBodyMap.get("CUST_ACNT_NAME");
 				CUST_ADRS = msgBodyMap.get("ORGIN_REMIT");
 				
-				
-				String[] benf_dtls = msgBodyMap.get("BENF_CUST").split("\\n");
-				
 				BENF_ACNT_NO = msgBodyMap.get("BENF_ACNT_NO");
-				
-				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
 				
 			}
 			else{
@@ -170,7 +164,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 			filteredData.put("CUST_ADRS", CUST_ADRS);
 			filteredData.put("CUST_NAME", CUST_NAME);
 			filteredData.put("BENF_ACNT_NO", BENF_ACNT_NO);
-			filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
+			
 		}
 		catch(Exception e){
 			
