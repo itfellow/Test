@@ -27,7 +27,7 @@ public class MessageDataFilter {
 				 
 				 String code_value = msgBody.get(code);
 				 
-				 System.out.println("Value of "+code+"("+code_name+") is: "+code_value);
+//				 System.out.println("Value of "+code+"("+code_name+") is: "+code_value);
 				 
 				 if(code_name!=null){
 					 

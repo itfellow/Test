@@ -3,19 +3,13 @@ package com.omni.oesb.fileparser.transformer.pac;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.Serializable;
-import java.sql.Blob;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 
-import org.w3c.dom.Element;
-
-import com.omni.oesb.DigitalSignature.SignData;
 import com.omni.oesb.fileparser.Util.FileReaderUtil;
 import com.omni.oesb.fileparser.transformer.TransformerUtil;
 import com.omni.oesb.transformer.xml.head_001_001_01.BranchAndFinancialInstitutionIdentification5;
@@ -27,7 +21,6 @@ import com.omni.oesb.transformer.xml.head_001_001_01.ObjectFactory;
 import com.omni.oesb.transformer.xml.head_001_001_01.Party9Choice;
 import com.omni.oesb.transformer.xml.head_001_001_01.SignatureEnvelope;
 import com.omni.util.common.PropAccess;
-import com.sun.org.apache.xml.internal.security.signature.XMLSignature;
 
 
 

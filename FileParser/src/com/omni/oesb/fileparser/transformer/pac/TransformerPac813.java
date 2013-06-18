@@ -3,7 +3,6 @@ package com.omni.oesb.fileparser.transformer.pac;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.ResourceBundle;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -42,13 +41,8 @@ import com.omni.oesb.transformer.xml.pacs_008_001_03.RemittanceInformation7;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.ServiceLevel8Choice;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementInstruction1;
 import com.omni.oesb.transformer.xml.pacs_008_001_03.SettlementMethod1Code;
-import com.omni.util.common.PropAccess;
 
-public final class TransformerPac813 extends TransformerPacHeader implements Transformer{
-	
-	private ResourceBundle bundle 		= PropAccess.getResourceBundle();
-	
-	private String transIdGen = bundle.getString("TransIdGenFlag").trim();
+public final class TransformerPac813 extends TransformerPacHeader implements Transformer{	
 	
 	public void convertToNGRTGS(String pacName,
 								String businessRule, 
@@ -597,7 +591,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 	        
 	        marshaller.marshal(element,createXml);
 
-	        marshaller.marshal(element,System.out);
+//	        marshaller.marshal(element,System.out);
 	        
 	        return docBodyAbsPath;
 	        
