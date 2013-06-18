@@ -55,7 +55,7 @@ public class MessageDataFilter {
 				 
 				 String code_value = msgBody.get(code);
 				 
-//				 System.out.println("Value of "+code+"("+code_name+") is: "+code_value);
+				 System.out.println("Value of "+code+"("+code_name+") is: "+code_value);
 				 
 				 if(code_name!=null){
 					 
@@ -158,24 +158,30 @@ public class MessageDataFilter {
 		
 		if(order_CustDtls!=null && order_CustDtls.length>0){
 			//Split acount no , acount name, adrs from order_customer
+			String cust_acnt_no = order_CustDtls[0].replace("/", "").trim();
+			String cust_acnt_name = order_CustDtls[1];
+			String cust_adrs  = order_CustDtls[2].trim()+" "+order_CustDtls[3].trim();
 			
 			//customer account no
-			dataFilter.put("CUST_ACNT_NO", order_CustDtls[0].replace("/", "").trim());
+			dataFilter.put("CUST_ACNT_NO", cust_acnt_no);
 			//customer account name
-			dataFilter.put("CUST_ACNT_NAME", order_CustDtls[1]);
+			dataFilter.put("CUST_ACNT_NAME", cust_acnt_name);
 			//customer adrs
-			dataFilter.put("CUST_ADRS", order_CustDtls[2].trim()+" "+order_CustDtls[3].trim());
+			dataFilter.put("CUST_ADRS", cust_adrs);
+			
 		}
 		
 		////Formating Benf customer. code:5561/////
 		
 		String benf_CustDtls[] = parseBenfCustomerForR41(dataFilter.get("BENF_CUST"));
 		
+		String benf_acnt_no = benf_CustDtls[0];
+		
+		dataFilter.put("BENF_ACNT_NO", benf_acnt_no);
+		
 		if(benf_CustDtls!=null){
 			
 			if(benf_CustDtls.length > 4){
-				
-				dataFilter.put("BENF_ACNT_NO", benf_CustDtls[0]);
 				
 				dataFilter.put("BENF_ACNT_NAME", benf_CustDtls[1]);
 				
@@ -193,12 +199,16 @@ public class MessageDataFilter {
 			}
 			else if(benf_CustDtls.length > 2){
 				
-				dataFilter.put("BENF_ACNT_NO", benf_CustDtls[0]);
+				dataFilter.put("BENF_ACNT_NAME", benf_CustDtls[1]);
 				
-				String benfAdrs = benf_CustDtls[1];
+				StringBuffer benfAdrs = new StringBuffer();
+				int benfAdrs_len = benf_CustDtls.length;
+				for(int i = 2; i < benfAdrs_len; i++){
+					benfAdrs.append(benf_CustDtls[i] + " ");
+				}
 				
 				if(benfAdrs!=null && benfAdrs.length() > 0){
-					dataFilter.put("BENF_ADRS", benfAdrs);
+					dataFilter.put("BENF_ADRS", benfAdrs.toString());
 				}
 			}
 		}
