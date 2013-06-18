@@ -155,7 +155,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 				
 				SENDER_TO_REMITTANCE_INFO = msgBodyMap.get("SNDR_TO_RCVR_INFO").replace("//", "");
 				filteredData.put("SENDER_TO_REMITTANCE_INFO", SENDER_TO_REMITTANCE_INFO);
-				
+
 			}
 			else if(type.charAt(0)=='N' || type.charAt(0)=='n'){
 				
@@ -173,7 +173,7 @@ public final class TransformerPac813 extends TransformerPacHeader implements Tra
 				
 				String BENF_NAME = msgBodyMap.get("BENF_ACNT_NAME");
 				filteredData.put("BENF_NAME", BENF_NAME);
-				
+
 				String BENF_ADRS = msgBodyMap.get("BENF_ADRS");
 				filteredData.put("BENF_ADRS", BENF_ADRS);
 			}
