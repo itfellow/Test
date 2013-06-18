@@ -39,6 +39,7 @@ public class MessageParser{
 				ArrayList<HashMap<String,String>> messageContent = parserUtil.getMessageContent(message);
 				
 				int messageListSize = messageContent.size();
+				
 				System.out.println("message List Size ====> "+messageListSize);
 				
 				for(int i=messageListSize; i>0; i--) 
@@ -60,7 +61,6 @@ public class MessageParser{
 						msgBodyMap = msgDataFilter.filterMsgBodyData(headerMap.get("MSG_SUBTYPE"),msgBodyMap);
 						
 						parseStatus = dataInsert.insertTxtData(headerMap,msgBodyMap);
-						parseStatus = AppConstants.MSG_PARSE_SUCCESS;
 						
 						tranformTxtToXml(parseStatus, headerMap, msgBodyMap);
 						
@@ -118,19 +118,23 @@ public class MessageParser{
 	
 	private void tranformTxtToXml(String parseStatus,HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
-		if(parseStatus.equals(AppConstants.MSG_PARSE_SUCCESS)){
+		if(parseStatus.equals(AppConstants.MSG_PARSE_SUCCESS) && headerMap.get("IO_ID").equalsIgnoreCase("O")){
 			
 			if(AppConstants.isTranform == true){
 				
 				try{
+					fileLogger.writeLog("info", "started .txt to .xml Transformation Operation");
 					
 					transFormerHandler.tranformData(headerMap,msgBodyMap);
 					
+					fileLogger.writeLog("info", "Exiting Transformation Operation");
+					
 				}catch(Exception e){
-					
-					System.exit(0);
-					
 					e.printStackTrace();
+					fileLogger.writeLog("severe", e.getMessage());
+					fileLogger.writeLog("severe", "Error Occured in Tranformation Operation.");
+					fileLogger.writeLog("severe", "Application Shutdown");
+					System.exit(0);
 				
 				}
 				

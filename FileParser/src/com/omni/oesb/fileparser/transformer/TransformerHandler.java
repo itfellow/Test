@@ -5,12 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.omni.component.hibernate.DatabaseUtil;
+import com.omni.component.logging.FileLogger;
 import com.omni.oesb.fileparser.transformer.pac.Transformer;
 
 public class TransformerHandler {
 	
 	private final static DatabaseUtil dbUtil = new DatabaseUtil();
 	
+	private final FileLogger fileLogger  = FileLogger.getFileLogger(this.getClass().getName());
 	
 	public void tranformData(HashMap<String, String> headerMap, HashMap<String, String>  msgBodyMap){
 		
@@ -31,11 +33,13 @@ public class TransformerHandler {
 					
 				}
 				else{
+					fileLogger.writeLog("warning", "pac Not Found for Transformation");
 					throw new Exception("pacName cannot be Null");
 				}
 				
 			}
 			else{
+				fileLogger.writeLog("warning", "Cannot Transform Message Type: "+msgTyp);
 				throw new Exception("msgTypId Cannot be NULL");
 			}
 			
@@ -43,6 +47,9 @@ public class TransformerHandler {
 		} catch (Exception e) {
 			
 			e.printStackTrace();
+			fileLogger.writeLog("severe", e.getMessage());
+			fileLogger.writeLog("severe", "Error Occured in Tranformation Operation.");
+			fileLogger.writeLog("severe", "Application Shutdown");
 			System.exit(0);
 			
 		}
@@ -75,16 +82,6 @@ public class TransformerHandler {
 		}
 		
 		return null;
-	}
-	
-	
-	
-	public static void main(String[] args) {
-		HashMap<String , String> map = new HashMap<String, String>();
-		map.put("ORGIN_DT","2013/05/08".replace("/", ""));
-		map.put("SNDR_IFSC","VSBL0000012");
-		map.put("UTR", "VSBLH13128000024");
-//		new TransformerHandler().generateNgrtgsTransId('R', map);
 	}
 
 }
